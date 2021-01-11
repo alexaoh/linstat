@@ -1,0 +1,120 @@
+---
+title: "Recommended Exercise 1 in Statistical Linear Models, Spring 2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 1 \hspace{3mm} Simple matrix calculations
+
+Solve the problems by hand and by use of R when possible. 
+
+## a) 
+Construct $A$ as a matrix in R. 
+```{r a), eval = TRUE, echo = TRUE}
+A <- matrix(c(9, -2, -2, 6), nrow = 2)
+A
+```
+
+## b) 
+$A$ is symmetric, which can be seen in R via 
+```{r b), eval = TRUE, echo = TRUE}
+t(A) == A
+```
+
+## c)
+Show that $A$ is positive definite.
+
+From the definition of positive definiteness we get
+$$
+\begin{pmatrix}
+a & b
+\end{pmatrix}\begin{pmatrix}
+9 & -2\\
+-2 & 6
+\end{pmatrix}\begin{pmatrix}
+a\\
+b
+\end{pmatrix} = 9a^2 - 4ab +6b^2 = 9(a^2 -\frac49ab+\frac{4}{81}b^2) + \frac{50}{9}b^2 = 9(a - \frac29b)^2 + \frac{50}{9}b^2 > 0.
+$$
+Hence, $A$ is positive definite. 
+
+## d)
+Find the eigenvalues and eigenvectors of $A$.
+```{r d), eval = TRUE, echo = TRUE}
+evalues <- eigen(A)
+
+# Names in data frame given from eigen().
+names(evalues)
+
+# Eigenvalues.
+evalues$values
+
+# Eigenvectors.
+evalues$vectors
+
+# Check if the eigenvectors are normal.
+t(evalues$vectors[, 1]) %*% evalues$vectors[, 1] 
+t(evalues$vectors[, 2]) %*% evalues$vectors[, 2] 
+# Since t(vector)*vector = 1 for both vectors, they are normal. 
+```
+
+## e)
+Find an orthogonal diagonalization of $A$. 
+```{r e), eval = TRUE, echo = TRUE}
+lambda <- diag(evalues$values)
+P <- evalues$vectors
+
+# Orthogonal diagonalization.
+ortho.diag <- P %*% lambda %*% t(P)
+ortho.diag == A 
+```
+
+By hand it can be done in the same way. Construct a matrix $\Lambda$ which contains the eigenvalues of $A$ on its diagonal. Furthermore, a matrix $P$ is constructed by using the normalized eigenvectors as columns, in the same respective order as in $\Lambda$. The product $A = P\Lambda P^T$ is the orthogonal diagonalization of $A$.
+
+## f)
+Find $A^{-1}$.
+```{r f), eval = TRUE, echo = TRUE}
+A.inverse <- solve(A)
+A.inverse
+```
+By hand it can be done by use of regular Gaussian elimination. 
+
+## g)
+Find the eigenvalues and eigenvectors of $A^{-1}$. Relationship between the eigenvalues and eigenvectors of $A$ and $A^{-1}$?
+```{r g), eval = TRUE, echo = TRUE}
+evalues.inverse <- eigen(A.inverse)
+
+# Eigenvalues of A.
+evalues$values
+# Eigenvalues of A inverse. 
+evalues.inverse$values
+
+# Eigenvectors of A.
+evalues$vectors
+# Eigenvectors of A inverse.
+evalues.inverse$vectors
+```
+
+It is apparent that the eigenvalues of $A$ and $A^{-1}$ are reciprocals. Furthermore, the eigenvectors have the following relationship
+
+* The eigenvector of $A$'s eigenvalue 10 is identical to the eigenvector of $A^{-1}$'s eigenvalue $\frac{1}{10}$ (the reciprocal eigenvalue).
+* The eigenvector of $A$'s eigenvalue 5 is $-1$ times the eigenvector of $A^{-1}$'s eigenvalue $\frac{1}{5}$ (the reciprocal eigenvalue).
+
+## h)
+Why can $A$ be a covariance matrix?
+
+$A$ can be a covariance matrix because 
+
+## i)
+Assume that $A$ is the covariance matrix of a random vector. Find the correlation matrix. Check the computations with `cov2cor`.
+
+## j) 
+
+# Problem 2 \hspace{3mm} Mean and covariance of linear combinations
+
+# Problem 3 \hspace{3mm} Covariance formula
+
+# Problem 4 \hspace{3mm} The square root matrix and the Mahalanobis transform 
