@@ -1,10 +1,12 @@
 ---
 title: "Recommended Exercise 1 in Statistical Linear Models, Spring 2021"
+author: "alexaoh"
+date: "11.01.2021"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>")
 ```
 
 # Problem 1 \hspace{3mm} Simple matrix calculations
@@ -106,15 +108,82 @@ It is apparent that the eigenvalues of $A$ and $A^{-1}$ are reciprocals. Further
 ## h)
 Why can $A$ be a covariance matrix?
 
-$A$ can be a covariance matrix because 
+$A$ can be a covariance matrix since $(a_{12}) = (a_{21})$, since the covariance operator has the property $\text{Cov}(X_i, X_j) = \text{Cov}(X_j, X_i), \quad i \neq j$. 
 
 ## i)
 Assume that $A$ is the covariance matrix of a random vector. Find the correlation matrix. Check the computations with `cov2cor`.
 
+The correlation matrix is given by the following calculation in R
+
+```{r}
+R <- diag(1, nrow = 2)
+rho <- function(i, j){
+  return (A[i, j]/sqrt(A[i, i]%*%A[j, j]))
+}
+
+R[1, 2] <- rho(1, 2)
+R[2, 1] <- rho(2, 1)
+
+# Correlation matrix calculated manually.
+R
+
+
+# Correlation matrix calculated with cov2cor.
+cov2cor(A)
+```
+
+It is apparent that the two matrices are identical. The same formula for $\rho_{ij}$ can be used to find the correlation matrix $R$ by hand, which has ones on the entire diagonal (naturally, since each value in the stochastic vector correlates to the fullest with itself).
+
 ## j) 
+
+```{r}
+E.X <- c(3,1)
+Cov.X <- A
+
+# First expression.
+B <- matrix(c(1,1,1,2), nrow = 2)
+B%*%E.X # Expectation.
+B%*%Cov.X%*%t(B) # Covariance.
+
+# Second expression.
+C <- matrix(c(1,2), nrow=1)
+C%*%E.X # Expectation.
+C%*%Cov.X%*%t(C) # Covariance.
+
+# Third expression (block matrix).
+matrix(c(E.X, 3*E.X), nrow = 1) # Expectation.
+# Not sure how to find the covariance matrix of the block matrix?
+
+
+```
 
 # Problem 2 \hspace{3mm} Mean and covariance of linear combinations
 
+Find the mean and covariance of $A\boldsymbol{X}$ (below).
+```{r}
+E.X <- c(1,1,1)
+Cov.X <- diag(3)
+
+A <- matrix(c(2/3, -1/3, -1/3, -1/3, 2/3, -1/3, -1/3, -1/3, 2/3), nrow=3)
+
+# Mean.
+A%*%E.X
+
+# Covariance.
+A%*%Cov.X%*%t(A)
+```
+
+
 # Problem 3 \hspace{3mm} Covariance formula
 
+Show that $\text{Cov}(\boldsymbol{V}, \boldsymbol{W}) = \text{E}(\boldsymbol{VW}^T) - (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^T$.
+
 # Problem 4 \hspace{3mm} The square root matrix and the Mahalanobis transform 
+
+## a)
+
+## b)
+
+## c)
+
+## d)
