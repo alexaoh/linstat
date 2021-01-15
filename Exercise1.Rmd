@@ -48,7 +48,7 @@ Find the eigenvalues and eigenvectors of $A$.
 ```{r d), eval = TRUE, echo = TRUE}
 evalues <- eigen(A)
 
-# Names in data frame given from eigen().
+# Names in list given from eigen().
 names(evalues)
 
 # Eigenvalues.
@@ -71,6 +71,7 @@ P <- evalues$vectors
 
 # Orthogonal diagonalization.
 ortho.diag <- P %*% lambda %*% t(P)
+ortho.diag
 ortho.diag == A 
 ```
 
@@ -82,10 +83,10 @@ Find $A^{-1}$.
 A.inverse <- solve(A)
 A.inverse
 ```
-By hand it can be done by use of regular Gaussian elimination. 
+By hand it can be done by use of standard Gaussian elimination. 
 
 ## g)
-Find the eigenvalues and eigenvectors of $A^{-1}$. Relationship between the eigenvalues and eigenvectors of $A$ and $A^{-1}$?
+Find the eigenvalues and eigenvectors of $A^{-1}$. Is there a relationship between the eigenvalues and eigenvectors of $A$ and $A^{-1}$?
 ```{r g), eval = TRUE, echo = TRUE}
 evalues.inverse <- eigen(A.inverse)
 
@@ -105,10 +106,12 @@ It is apparent that the eigenvalues of $A$ and $A^{-1}$ are reciprocals. Further
 * The eigenvector of $A$'s eigenvalue 10 is identical to the eigenvector of $A^{-1}$'s eigenvalue $\frac{1}{10}$ (the reciprocal eigenvalue).
 * The eigenvector of $A$'s eigenvalue 5 is $-1$ times the eigenvector of $A^{-1}$'s eigenvalue $\frac{1}{5}$ (the reciprocal eigenvalue).
 
+In general theory this makes sense because an eigenvalue/-vector pair is defined as $A\boldsymbol{v} = \lambda\boldsymbol{v}$ for an eigenvector $\boldsymbol{v} \neq 0$. This expression is equivalent to $A^{-1}\boldsymbol{v} = \frac{1}{\lambda}\boldsymbol{v}$ (by multiplication of the inverse matrix $A^{-1}$ and division by $\lambda$). This means that each eigenvector $\boldsymbol{v}$ of $A$ corresponding to the eigenvalue $\lambda$ is an eigenvector of $A^{-1}$ corresponding to the reciprocal eigenvalue $\frac1\lambda$. As a sidenote, the negative sign on the second eigenvector calculated via R is probably a result of the way the eigenvectors have been calculated in R. Also, the different order of the eigenvalues/-vectors is a coincidence. 
+
 ## h)
 Why can $A$ be a covariance matrix?
 
-$A$ can be a covariance matrix since $(a_{12}) = (a_{21})$, since the covariance operator has the property $\text{Cov}(X_i, X_j) = \text{Cov}(X_j, X_i), \quad i \neq j$. 
+$A$ can be a covariance matrix since $(a_{12}) = (a_{21})$, since the covariance operator has the property $\text{Cov}(X_i, X_j) = \text{Cov}(X_j, X_i), \hspace{2mm} i \neq j$. This means that it is symmetric. Furthermore, $A$ is positive definite. We know that a matrix can be a covariance matrix if it is symmetric positive semi-definite, which is the case for $A$. As noted in suggested solutions, later in the course we will see that for all positive definite symmetric matrices there exists a multivariate normal distribution having that covariance matrix. 
 
 ## i)
 Assume that $A$ is the covariance matrix of a random vector. Find the correlation matrix. Check the computations with `cov2cor`.
@@ -130,12 +133,20 @@ R
 
 # Correlation matrix calculated with cov2cor.
 cov2cor(A)
+
+
+# Perhaps a smoother calculation given below (from LF).
+varvec <- diag(A) # Variances. 
+varvec
+invs <- diag(1/sqrt(varvec)) # Inverse standard deviations. 
+invs
+invs %*% A %*% invs
 ```
 
-It is apparent that the two matrices are identical. The same formula for $\rho_{ij}$ can be used to find the correlation matrix $R$ by hand, which has ones on the entire diagonal (naturally, since each value in the stochastic vector correlates to the fullest with itself).
+It is apparent that the two matrices are identical. The same formula for $\rho_{ij} = \frac{\text{Cov}(X_i, X_j)}{\sqrt{\text{Cov}(X_i)\text{Cov}(X_j)}}$ can be used to find the correlation matrix $R$ by hand, which has ones on the entire diagonal (naturally, since each value in the stochastic vector correlates to the fullest with itself).
 
-## j) 
-
+## j)
+Find the expecation and covariance matrices of the given expressions. 
 ```{r}
 E.X <- c(3,1)
 Cov.X <- A
@@ -151,11 +162,33 @@ C%*%E.X # Expectation.
 C%*%Cov.X%*%t(C) # Covariance.
 
 # Third expression (block matrix).
-matrix(c(E.X, 3*E.X), nrow = 1) # Expectation.
-# Not sure how to find the covariance matrix of the block matrix?
-
-
+c(E.X, 3*E.X) # Expectation.
+cbind(rbind(Cov.X, 3*Cov.X), rbind(3*Cov.X, 9*Cov.X))# Covariance.
 ```
+
+The last task was to find the expecation and covariance of the block matrix 
+
+$$\begin{pmatrix}
+\boldsymbol{X} \\
+3\boldsymbol{X}
+\end{pmatrix}.$$
+Finding the expectation is pretty obvious, since expecation is linear. The expectation is given by 
+
+$$\begin{pmatrix}
+3 \\
+1 \\
+9 \\
+1
+\end{pmatrix}.$$
+
+However the covariance matrix could perhaps be explained. This matrix should encapsulate all four combinations of correlation between the two blocks in the block matrix, which means that the covariance matrix should take the form 
+
+$$\begin{pmatrix}
+\text{Cov}(\boldsymbol{X}) & \text{Cov}(\boldsymbol{X},3\boldsymbol{X})\\
+\text{Cov}(3\boldsymbol{X},\boldsymbol{X}) & \text{Cov}(3\boldsymbol{X})\\
+\end{pmatrix},$$
+
+which explains the covariance matrix found via R. 
 
 # Problem 2 \hspace{3mm} Mean and covariance of linear combinations
 
@@ -164,26 +197,67 @@ Find the mean and covariance of $A\boldsymbol{X}$ (below).
 E.X <- c(1,1,1)
 Cov.X <- diag(3)
 
-A <- matrix(c(2/3, -1/3, -1/3, -1/3, 2/3, -1/3, -1/3, -1/3, 2/3), nrow=3)
+D <- matrix(c(2/3, -1/3, -1/3, -1/3, 2/3, -1/3, -1/3, -1/3, 2/3), nrow=3)
 
 # Mean.
-A%*%E.X
+D%*%E.X
 
 # Covariance.
-A%*%Cov.X%*%t(A)
+D%*%Cov.X%*%t(D)
 ```
 
 
 # Problem 3 \hspace{3mm} Covariance formula
 
-Show that $\text{Cov}(\boldsymbol{V}, \boldsymbol{W}) = \text{E}(\boldsymbol{VW}^T) - (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^T$.
+Show that $\text{Cov}(\boldsymbol{V}, \boldsymbol{W}) = \text{E}(\boldsymbol{VW}^{\text{T}}) - (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^{\text{T}}$.
+
+Recalling the definition of covariance, the proof is as follows
+
+$$
+\begin{split}
+\text{Cov}(\boldsymbol{V}, \boldsymbol{W}) & = \text{E}\{(\boldsymbol{V}-\text{E}\boldsymbol{V})(\boldsymbol{W}-\text{E}\boldsymbol{W})^{\text{T}}\} \\
+& = \text{E}\{\boldsymbol{V}\boldsymbol{W}^{\text{T}}-\boldsymbol{V}(\text{E}\boldsymbol{W})^{\text{T}} - (\text{E}\boldsymbol{V})\boldsymbol{W}^{\text{T}} + (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^{\text{T}}\} \\
+& = \text{E}\{\boldsymbol{V}\boldsymbol{W}^{\text{T}}\} - (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^{\text{T}} - (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W}^{\text{T}}) + (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^{\text{T}} \\
+& = \text{E}(\boldsymbol{VW}^{\text{T}}) - (\text{E}\boldsymbol{V})(\text{E}\boldsymbol{W})^{\text{T}}, 
+\end{split}
+$$
+
+provided that $\text{E}(\boldsymbol{X^{\text{T}}}) = \text{E}(\boldsymbol{X})^{\text{T}}$.
 
 # Problem 4 \hspace{3mm} The square root matrix and the Mahalanobis transform 
 
 ## a)
+$\Sigma$ is positive semidefinite because, for any vector $\boldsymbol{a}$ of equal lengh to $\boldsymbol{X}$, the following holds
+
+$$
+0\leq \text{Cov}(\boldsymbol{a}^{\text{T}}\boldsymbol{X}) = \boldsymbol{a}^{\text{T}}\text{Cov}(\boldsymbol{X})\boldsymbol{a} = \boldsymbol{a}^{\text{T}}\Sigma\boldsymbol{a}.
+$$
+This is a direct consequence of the fact that the variance always is nonnegative. Also, it is symmetric, since the covariance-operator is symmetric in its arguments. Hence, $\Sigma$ is symmetric positive semidefinite. 
 
 ## b)
+Since we are assuming that $\Sigma$ is positive definite, we know the following
+$$
+\begin{split}
+0 <\boldsymbol{a}^{\text{T}}\Sigma\boldsymbol{a} &= \boldsymbol{a}^{\text{T}}P\Lambda P^{\text{T}}\boldsymbol{a} \\
+&= \boldsymbol{y}^{\text{T}}\Lambda\boldsymbol{y} \qquad \text{define} \hspace{2mm} \boldsymbol{y} = P^{\text{T}}\boldsymbol{a} \\
+&= \sum_i{\lambda_iy_i^2}, 
+\end{split}
+$$
+
+Since this must hold for all non-zero vectors $\boldsymbol{a}$. we are free to choose. Choose $\boldsymbol{a}$ such that $\boldsymbol{y}$ equals the unit vector $\delta_j$ ($\boldsymbol{a} = \delta_j P^{\text{T}}$). From the calculations above, this gives $0 < \lambda_j$. By choosing all necessary unit vectors it becomes apparent that each of the eigenvalues must be positive. Hence, all the eigenvalues of $\Sigma$ are positive. 
+
+$\Sigma$ has an inverse because it is non-singular, which is apparent since all eigenvalues are positive. The same goes for $\Sigma^{-1}$ because $\Sigma^{-1} = (P\Lambda P^{\text{T}})^{-1} = P\Lambda^{-1}P^{\text{T}}$ (since $P$ is orthogonal) is non-singular as well, since this shows that the eigenvalues of $\Sigma^{-1}$ are the reciprocals of the eigenvalues of $\Sigma$. 
 
 ## c)
+Define $\Sigma^{1/2} = P\Lambda^{1/2}P^{\text{T}}$ and $\Sigma^{-1/2} = P\Lambda^{-1/2}P^{\text{T}}$. Both are symmetric, because $(\Sigma^{1/2})^{\text{T}} = \Sigma^{1/2}$ and $(\Sigma^{-1/2})^{\text{T}} = \Sigma^{-1/2}$. Furthermore
+
+$$
+\begin{split}
+\Sigma^{1/2}\Sigma^{1/2} &= P\Lambda^{1/2}P^{\text{T}}P\Lambda^{1/2}P^{\text{T}} = P\Lambda^{1/2}\Lambda^{1/2}P^{\text{T}} = P \Lambda P^{\text{T}} = \Sigma, \\
+\Sigma^{-1/2}\Sigma^{-1/2} &= P\Lambda^{-1/2}P^{\text{T}}P\Lambda^{-1/2}P^{\text{T}} = P\Lambda^{-1/2}\Lambda^{-1/2}P^{\text{T}} = P\Lambda^{-1}P^{\text{T}} = \Sigma^{-1}, \\
+\Sigma^{1/2}\Sigma^{-1/2} &= P\Lambda^{1/2}P^{\text{T}}P\Lambda^{-1/2}P^{\text{T}} = P\Lambda^{1/2}\Lambda^{-1/2}P^{\text{T}} = PP^{\text{T}} = I.
+\end{split}
+$$
 
 ## d)
+The Mahalanobis transform is gives as $\boldsymbol{Y} = \Sigma^{-1/2}(\boldsymbol{X} - \boldsymbol{\mu})$. The expectation of this transform is $\text{E}\boldsymbol{Y} = \text{E}\{\Sigma^{-1/2}(\boldsymbol{X} - \boldsymbol{\mu})\} = \Sigma^{-1/2}\text{E}\{\boldsymbol{X} - \boldsymbol{\mu}\} = \Sigma^{-1/2}(\text{E}\boldsymbol{X} - \boldsymbol{\mu}) =  \Sigma^{-1/2}(\boldsymbol{\mu} - \boldsymbol{\mu}) = \boldsymbol{0}$ and the covariance is $\text{Cov}(\boldsymbol{Y}) = \text{Cov}(\Sigma^{-1/2}(\boldsymbol{X} - \boldsymbol{\mu})) = \Sigma^{-1/2}\text{Cov}(\boldsymbol{X})(\Sigma^{-1/2})^{\text{T}} = \Sigma^{-1/2}\Sigma\Sigma^{-1/2} = \Sigma^{-1/2}\Sigma^{1/2}\Sigma^{1/2}\Sigma^{-1/2} = I$. 
