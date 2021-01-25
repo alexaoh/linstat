@@ -91,19 +91,23 @@ cov(USArrests) # Here we see which of the variables have the highest variables.
 ## b) 
 Make a plot of the standard normal pdf.
 ```{r}
-x <- seq(-2.5, 2.5, by = 0.01)
+left.endpoint <- -3
+right.endpoint <- 3
+x <- seq(left.endpoint, right.endpoint, by = 0.01)
 y <- dnorm(x)
 
-plot(x,y, type = "l", lwd = 0.8, )
-abline(v = c(qnorm(0.05), qnorm(0.95)))
+plot(x,y, type = "l", lwd = 0.8, xlim = c(left.endpoint+0.5, right.endpoint-0.5))
+# Kan heller skrive:
+# plot(dnorm, left.endpoint, right.endoint)
+abline(v = c(qnorm(0.05), qnorm(0.95)), col = "red")
 
 # Coloring in the tails next.
-left.x <- seq(-3, qnorm(0.05), by = 0.01)
-right.x <- seq(qnorm(0.95), 3, by = 0.01)
+left.x <- seq(left.endpoint, qnorm(0.05), by = 0.01)
+right.x <- seq(qnorm(0.95), right.endpoint, by = 0.01)
 left.y <- dnorm(left.x)
 right.y <- dnorm(right.x)
-polygon(x = c(qnorm(0.95), right.x, 3) , y = c(0, right.y, 0), col = "skyblue")
-polygon(x = c(-3, left.x, qnorm(0.05)) , y = c(0, left.y, 0), col = "skyblue")
+polygon(x = c(qnorm(0.95), right.x, right.endpoint) , y = c(0, right.y, 0), col = "skyblue")
+polygon(x = c(left.endpoint, left.x, qnorm(0.05)) , y = c(0, left.y, 0), col = "skyblue")
 ```
 
 ## c) 
@@ -111,12 +115,12 @@ polygon(x = c(-3, left.x, qnorm(0.05)) , y = c(0, left.y, 0), col = "skyblue")
 ```{r}
 data <- rnorm(10000)^2
 
-# Add chi-squared.
-x.val <- seq(0, 10, by = 0.01)
-y.val <- dchisq(x.val, df = 1)
+hist(data, nclass = 100, freq = F, main = "Std Gaussian^2 and Chisquared df = 1")
 
-hist(data, freq = F, main = "Std Gaussian^2 and Chisquared df = 1")
-lines(x.val, y.val, col = "red")
+# Add chi-squared.
+plot(function(x) dchisq(x, df = 1), from = min(data), to = max(data), add = TRUE, col = "red")
+
+# Add quantiles. 
 abline(v = c(qchisq(0.1, df = 1), qchisq(0.9, df = 1)), col = c("green", "blue"))
 ```
 
