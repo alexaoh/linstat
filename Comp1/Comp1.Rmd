@@ -32,5 +32,7 @@ We know that the Gaussian distribution is closed under linear combinations. This
 (I think these facts are true, but I have no explanation yet).
 Contours of the multivariate Gaussian distribution are ellipsoids. The principal axes of these ellipsoids are given by lines in the directions of the eigenvectors of the covariance matrix of the variable with the given multivariate Gaussian distribution. Furthermore, the length of the half-axes are given by the eigenvalues times their respective eigenvectors (the directions I am explaining seem correct based on the given figure, but the lengths according to the eigenvalues seem false. The relation is different in some way). 
 
+Page 69 (and 139 about the multinormal distribution) in HS: Based on this I think the lengths of the half-axes are given by the constant factor d (the constant which represents the size of the ellipsoids, "the radius if it were a circle/sphere") divided by the root of each respective eigenvalue in the direction of their corresponding eigenvectors. 
+
 ## Problem 2 \hspace{3mm} Distributional results for $\bar{X}$ and $S^2$ for a univariate normal sample
 
