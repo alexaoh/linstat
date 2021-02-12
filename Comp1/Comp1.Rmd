@@ -145,6 +145,19 @@ $$
 \end{split}
 $$
 
+We could also, instead of going the route above, show that $\frac1n\boldsymbol{1}\boldsymbol{1}^T\boldsymbol{X} = \sum_{i=1}^n\overline{X} (?)$ and use the proof below. This can be shown by
+
+$$
+\frac1n\boldsymbol{1}\boldsymbol{1}^T\boldsymbol{X} = \frac1n\begin{pmatrix} 
+    1-1/n & -1/n & \dots & -1/n\\
+    \vdots & \ddots & \vdots & \vdots \\
+    -1/n & -1/n & \dots & 1-1/n
+    \end{pmatrix}\begin{pmatrix} 
+    X_1\\
+    \vdots \\
+    X_n
+    \end{pmatrix} = 
+$$
 
 $$
 \begin{split}
@@ -154,7 +167,25 @@ S^2 &= \frac{1}{n-1}\boldsymbol{X}^TC\boldsymbol{X} = \frac{1}{n-1}\boldsymbol{X
 \end{split}
 $$
 
-since $(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)$ is idempotent and symmetric. 
+since $(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)$ is idempotent and symmetric. The fact that $C$ is idempotent and symmetric may be verified by direct calculation. The idempotent property follows by
+
+$$
+\begin{split}
+(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)^2 & = (I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T) = I - \frac2n\boldsymbol{1}\boldsymbol{1}^T + \frac{1}{n^2}\boldsymbol{1}\boldsymbol{1}^T\boldsymbol{1}\boldsymbol{1}^T \\
+&= I - \frac2n\boldsymbol{1}\boldsymbol{1}^T + \frac1n\boldsymbol{1}\boldsymbol{1}^T = I - \boldsymbol{1}\boldsymbol{1}^T, 
+\end{split}
+$$
+
+where the third equality follows since, in $\mathbb{R}^n$, we have that $\boldsymbol{1}\boldsymbol{1}^T\boldsymbol{1}\boldsymbol{1}^T = n\boldsymbol{1}\boldsymbol{1}^T$. The symmetric property follows by
+
+$$
+\begin{split}
+(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)^T = I^T-\frac1n(\boldsymbol{1}\boldsymbol{1}^T)^T = I-\frac1n\boldsymbol{1}\boldsymbol{1}^T.
+\end{split}
+$$
+
+Hence, the proof above is correct based on the (correct) assumption that the centering matrix is idempotent and symmetric. 
+
 
 DETTE ER LITT KAOS NÅ, MEN KAN FIKSES OPP I SENERE. 
 
