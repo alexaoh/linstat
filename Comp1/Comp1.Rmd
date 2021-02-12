@@ -1,7 +1,7 @@
 ---
 title: "Compulsory Exercise 1 in Statistical Linear Models, Spring 2021"
-author: "Alexander J Ohrt"
-date: "22.01.2021"
+author: "Sander Ruud, Alexander J Ohrt"
+date: "12.02.2021"
 output: pdf_document
 ---
 
@@ -12,6 +12,73 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>")
 # Problem 1 \hspace{3mm} Bivariate normal distribution
 
 ## a)
+
+Let $$A = \begin{pmatrix}
+1/\sqrt{2} & -1/\sqrt{2} \\
+1/\sqrt{2} & 1/\sqrt{2} \\
+\end{pmatrix}.$$ Then
+
+$$
+\text{E}(\boldsymbol{Y}) = \text{E}(A\boldsymbol{X}) = \begin{pmatrix}
+1/\sqrt{2} & -1/\sqrt{2} \\
+1/\sqrt{2} & 1/\sqrt{2} \\
+\end{pmatrix} \text{E}(\boldsymbol{X}) = \begin{pmatrix}
+1/\sqrt{2} & -1/\sqrt{2} \\
+1/\sqrt{2} & 1/\sqrt{2} \\
+\end{pmatrix} \begin{pmatrix}
+0 \\
+2 \\
+\end{pmatrix} = \begin{pmatrix}
+-2/\sqrt{2} \\
+2/\sqrt{2} \\
+\end{pmatrix} = \sqrt{2}\begin{pmatrix}
+-1 \\
+1 \\
+\end{pmatrix}
+$$
+
+and 
+
+$$
+\begin{split}
+\text{Cov}(\boldsymbol{Y}) = \text{Cov}(A\boldsymbol{X}) = A\text{Cov}(\boldsymbol{X})A^T &= \begin{pmatrix}
+1/\sqrt{2} & -1/\sqrt{2} \\
+1/\sqrt{2} & 1/\sqrt{2} \\
+\end{pmatrix} \begin{pmatrix}
+3 & 1 \\
+1 & 3 \\
+\end{pmatrix}\begin{pmatrix}
+1/\sqrt{2} & -1/\sqrt{2} \\
+1/\sqrt{2} & 1/\sqrt{2} \\
+\end{pmatrix}^T \\ &= \begin{pmatrix}
+2/\sqrt{2} & -2/\sqrt{2} \\
+4/\sqrt{2} & 4/\sqrt{2} \\
+\end{pmatrix}\begin{pmatrix}
+1/\sqrt{2} & 1/\sqrt{2} \\
+-1/\sqrt{2} & 1/\sqrt{2} \\
+\end{pmatrix} = \begin{pmatrix}
+2 & 0 \\
+0 & 4 \\
+\end{pmatrix}
+\end{split}
+$$
+
+We know that the Gaussian distribution is closed under linear combinations. This means that 
+
+$$
+\mathbf{Y} \sim N_{2}\left(\sqrt{2}\begin{pmatrix}
+-1 \\
+1 \\
+\end{pmatrix}, \begin{pmatrix}
+2 & 0 \\
+0 & 4 \\
+\end{pmatrix}\right)
+$$ 
+
+Moreover, since we know that uncorrelated variables in a random vector with a multivariate Gaussian distribution must be independent, this means that $Y_1$ and $Y_2$ are independent. 
+
+Bonus: Calculations in R.
+
 ```{r}
 mu.X <- c(0,2)
 Sigma.X <- matrix(c(3,1,1,3), ncol = 2)
@@ -20,19 +87,33 @@ A <- matrix(c(1/sqrt(2), 1/sqrt(2), -1/sqrt(2), 1/sqrt(2)), ncol = 2)
 mu.Y <- A %*% mu.X
 mu.Y
 
-Sigma.Y <- t(A) %*% Sigma.X %*% A
-Sigma.Y # Yes, the coordinates of Y are independent, since they are normally distributed and are uncorrelated. 
-# This is a "special feature" of the multivariate Gaussian distribution. 
+Sigma.Y <- A %*% Sigma.X %*% t(A)
+Sigma.Y  
+
+# Yes, the coordinates of Y are independent, since Y is normally distributed 
+# and the coordinates are uncorrelated.
 ```
-(Also calculated all this, in the same manner, by hand. Not sure if this should be handed in by hand or not.)
-We know that the Gaussian distribution is closed under linear combinations. This means that $\mathbf{Y}$ is distributed as a bivariate Gaussian distribution, with expectation given by `mu.Y` and covariance given by `Sigma.Y`. Further, since we know that uncorrelated variables in the multivariate Gaussian distribution must be independent, this means that $Y_1$ and $Y_2$ are independent. 
+
 
 ## b)
 
-(I think these facts are true, but I have no explanation yet).
-Contours of the multivariate Gaussian distribution are ellipsoids. The principal axes of these ellipsoids are given by lines in the directions of the eigenvectors of the covariance matrix of the variable with the given multivariate Gaussian distribution. Furthermore, the length of the half-axes are given by the eigenvalues times their respective eigenvectors (the directions I am explaining seem correct based on the given figure, but the lengths according to the eigenvalues seem false. The relation is different in some way). 
+By using the method of diagonalization one can show that the contours of a vector that has a multivariate Gaussian distribution are ellipsoids. Moreover, one can show that the axes of the ellipsoids have direction along the eigenvector of the covariance matrix $\Sigma$ and half-lengths $\sqrt{\lambda_i}b$ for, where $\lambda_i$ are the eigenvalues of $\Sigma$. More specifically, each of the half axes are given, in descending order based on length, by $\sqrt{\lambda_i}b$ with direction following each respective eigenvector $\mathbf{p}_i, \, i = 1, \dots, k$ for $\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_k$, where $k$ is the dimension of the multivariate Gaussian distribution. 
 
-Page 69 (and 139 about the multinormal distribution) in HS: Based on this I think the lengths of the half-axes are given by the constant factor d (the constant which represents the size of the ellipsoids, "the radius if it were a circle/sphere") divided by the root of each respective eigenvalue in the direction of their corresponding eigenvectors. 
+The derivation can be done here, if this is something that is sought after (I will ask today).
+
+MANGLER TEGNINGEN (med alle features markert) HER, FOR JEG KLARTE IKKE Å TEGNE FIGUREN I R LOL. Kan ev bare tegne for hånd sikkert. 
+
+The probability that $\boldsymbol{X}$ falls within the given ellipse is
+
+$$
+\begin{split}
+&P\left(\frac{y_1^2}{\lambda_1}+\frac{y_2^2}{\lambda_2} \leq b^2\right), \quad \text{where the change of variables } P\mathbf{y} = \mathbf{x}-\mathbf{\mu} \quad \text{is implemented} \\
+= &P\left(\frac{y_1^2\lambda_2 + y_2^2\lambda_1}{\lambda_1\lambda_2} \leq 4.6^2\right) \quad \text{Denne er sikkert unødvendig}\\
+= &\text{Tror ikke dette fører noe sted.}
+\end{split}
+$$
+
+Theorem B8 in FKLM states that, in general, $\boldsymbol{Y} = (\boldsymbol{X}-\boldsymbol{\mu})\Sigma^{-1}(\boldsymbol{X}-\boldsymbol{\mu}) \sim \chi^2_2$ when $\boldsymbol{Y} \sim N_{2}(\mu, \Sigma)$. Hence, the probability that $\boldsymbol{X}$ falls within the given ellipse is $\approx 0.9$, which is seen from the given output of `qchisq(0.9, 2)` $=$ `r qchisq(0.9, 2)`. This means that the quantile with the value $b \approx 4.6$ corresponds to the probability $\approx 0.9$.
 
 ## Problem 2 \hspace{3mm} Distributional results for $\bar{X}$ and $S^2$ for a univariate normal sample
 
