@@ -2,7 +2,9 @@
 title: "Compulsory Exercise 1 in Statistical Linear Models, Spring 2021"
 author: "Sander Ruud, Alexander J Ohrt"
 date: "12.02.2021"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -190,4 +192,10 @@ Hence, the proof above is correct based on the (correct) assumption that the cen
 DETTE ER LITT KAOS NÅ, MEN KAN FIKSES OPP I SENERE. 
 
 ## b)
+
+$$
+\frac{1}{n}\boldsymbol{1}^TC=\frac{1}{n}\boldsymbol{1}^TI-\frac{1}{n^2}\boldsymbol{1}^T\boldsymbol{1}\boldsymbol{1}^T=\boldsymbol{1}^T\frac{1}{n}-\frac{1}{n^2}\left[n\: ...\: n\right]=\boldsymbol{1}^T(1/n-1/n)=\boldsymbol{0}^T
+$$
+
+
 
