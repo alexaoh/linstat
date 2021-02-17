@@ -273,17 +273,17 @@ $$
 $$
 
 By Corollary 5.2 (HS), this implies that $\frac{1}{n} \mathbf{1}^{\mathrm{T}} \boldsymbol{X} \text { and } C \boldsymbol{X}$ are independent, since $\frac{1}{n}\boldsymbol{1}^T\sigma IC^T = 0$, $C$ is idempotent and $\boldsymbol{X} \sim N(\mu \boldsymbol{1}, \sigma^2I)$. This is a result of the fact that two linear transforms, $A\boldsymbol{X}$ and $B\boldsymbol{X}$, of a multivariate Gaussian $\boldsymbol{X}$ are independent iff $\text{Cov}(A\boldsymbol{X}, B\boldsymbol{X}) = 0$.
-Furthermore, this also implies that $\bar{X}$ and $S^{2}$ are independent by theorem B.8.2 (FKLM) \textcolor{red}{Tror det er nettopp dette de vil at vi skal vise. Viser her:}. Since $\frac{1}{n} \mathbf{1}^{\mathrm{T}} \boldsymbol{X} \text { and } C \boldsymbol{X}$ are independent, $\frac{1}{n} \mathbf{1}^{\mathrm{T}} \boldsymbol{X} \text { and } (C\boldsymbol{X})^T C \boldsymbol{X} = \boldsymbol{X}^T C^2 \boldsymbol{X} = \boldsymbol{X}^T C^2 \boldsymbol{X}$ must also be independent. This implies that $\bar{X}$ and $S^{2} = \frac{1}{n-1}\boldsymbol{X}^TC\boldsymbol{X}$ are independent. 
+Furthermore, this also implies that $\bar{X}$ and $S^{2}$ are independent by theorem B.8.2 (FKLM) \textcolor{red}{Tror det er nettopp dette de vil at vi skal vise. Viser her:}. Since $\frac{1}{n} \mathbf{1}^{\mathrm{T}} \boldsymbol{X} \text { and } C \boldsymbol{X}$ are independent, $\frac{1}{n} \mathbf{1}^{\mathrm{T}} \boldsymbol{X} \text { and } (C\boldsymbol{X})^T C \boldsymbol{X} = \boldsymbol{X}^T C^2 \boldsymbol{X} = \boldsymbol{X}^T C \boldsymbol{X}$ must also be independent. This implies that $\bar{X} = \frac{1}{n} \mathbf{1}^{\mathrm{T}} \boldsymbol{X}$ and $S^{2} = \frac{1}{n-1}\boldsymbol{X}^TC\boldsymbol{X}$ are independent. 
 
 ## c)
 
-Theorem B.8.2 (FKLM), also tells us that
+Theorem B.8.2 (FKLM) tells us that
 
 $$
 \frac{n-1}{\sigma^{2}} S^{2} \sim \chi_{n-1}^{2}
 $$
 
-Suppose $X_1,...,X_n$ is a univariate random sample with mean $\mu$. Then 
+Suppose $X_1,...,X_n$ is a univariate random sample with mean $\mu$ \textcolor{red}{Hva betyr dette?}. Then 
 
 
 $$
@@ -301,7 +301,7 @@ $$
 \frac{1}{\sigma^2}\sum_{i=1}^n \bar{X}^2 = \frac{1}{\sigma^2}\sum_{i=1}^n \left(X_i-\bar{X} \right)^2 +\frac{n}{\sigma^2}(\bar{X}-\mu)^2
 $$
 
-Furthermore, we know that $\sum_{i=1}^{n}\left(\frac{X_i-\mu}{\sigma}   \right)^2 \sim \chi_n^2$, $\bar{X}\sim N(\mu, \frac{\sigma^2}{n})$ and $\frac{n}{\sigma^2}(\bar{X}-\mu)^2\sim \chi_1^2$.
+Furthermore, we know that $\sum_{i=1}^{n}\left(\frac{X_i-\mu}{\sigma}   \right)^2 \sim \chi_n^2$, $\bar{X}\sim N(\mu, \frac{\sigma^2}{n}) \text{\textcolor{red}{Central Limit Theorem?`}}$ and $\frac{n}{\sigma^2}(\bar{X}-\mu)^2\sim \chi_1^2$.
 
 Because we have the sum of two independent distributions, their combined moment generating function is the product of their individual moment generating functions, $a=b+c\Rightarrow M_a=M_b M_c$, which here results in
 
@@ -309,9 +309,3 @@ $$
 M(t) = (1-2t)^{-\frac{n}{2}} / (1-2t)^{-\frac{1}{2}}=(1-2t)^{-(n-1)/2}
 $$
 Because, two distributions with the same MGF have the same distribution, we recognize this as a $\chi_{n-1}^2$ distrubution. $\square$
-
-
-
-
-
-
