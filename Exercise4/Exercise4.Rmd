@@ -1,0 +1,57 @@
+---
+title: "Recommended Exercise 4 in Statistical Linear Models, Spring 2021"
+author: "alexaoh"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>")
+```
+
+# Problem 4 \hspace{3mm} T- andF-distributions in R
+
+## a)
+```{r}
+B <- 10000
+p <- 9
+
+sample.norm <- rnorm(B)
+sample.chi <- rchisq(B, df = p)
+
+t <- sample.norm/sqrt(sample.chi/p)
+
+hist(t, freq = F, nclass = 50)
+plot(function(x) dt(x, df = p), from = min(t), to = max(t), 
+     add = TRUE, col = "red")
+abline(v = c(qt(0.05, df = p), qt(0.95, df = p)), col = c("green", "blue"))
+```
+
+## b)
+
+```{r}
+t.squared <- (sample.norm/sqrt(sample.chi/p))^2
+
+hist(t.squared, freq = F, nclass = 50)
+plot(function(x) df(x, df1 = 1, df2 = p), from = min(t.squared), to = max(t.squared), 
+     add = TRUE, col = "red")
+abline(v = c(qf(0.05, df1 = 1, df2 = p), qf(0.95, df1 = 1, df2 = p)), col = c("green", "blue"))
+```
+
+## c)
+
+```{r}
+n1 <- 5
+n2 <- 40
+
+sample.chin1 <- rchisq(B, df = n1)
+sample.chin2 <- rchisq(B, df = n2)
+
+F.ratio <- (sample.chin1/n1)/(sample.chin2/n2)
+
+hist(F.ratio, freq = F, nclass = 50)
+plot(function(x) df(x, df1 = n1, df2 = n2), from = min(F.ratio), to = max(F.ratio), 
+     add = TRUE, col = "red")
+abline(v = c(qf(0.05, df1 = n1, df2 = n2), qf(0.95, df1 = n1, df2 = n2)), col = c("green", "blue"))
+```
+
