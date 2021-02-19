@@ -1,0 +1,87 @@
+---
+title: "Recommended Exercise 5 in Statistical Linear Models, Spring 2021"
+author: "alexaoh"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F)
+```
+
+# Problem 1 \hspace{3mm} Simple linear regression
+
+## a)
+
+```{r}
+library(MASS)
+names(forbes)
+str(forbes)
+```
+
+```{r}
+n <- length(forbes$bp)
+Y <- matrix((forbes$bp - 32)*5/9, ncol = 1)
+X <- cbind(rep(1,n), forbes$pres*0.033863882)
+```
+
+## b)
+
+The rank of $X$ is 2, since it consists of two linearly independent columns. 
+
+## c)
+
+```{r}
+plot(X[, 2], Y, pch = 20, xlab = "Pressure", ylab = "Boiling Point")
+```
+
+It looks like there is a linear relationship between pressure and boiling point.
+
+## d)
+
+```{r}
+beta.hat <- solve(t(X)%*%X)%*%t(X)%*%Y
+beta.hat
+```
+
+To a layperson, I would say that these numbers mean the following. When the pressure is zero, the boiling point is estimated to being at $\sim$ `r beta.hat[1]` degress and for each unit the pressure is increased, the boiling point is estimated to increase by $\sim$ `r beta.hat[2]` degrees. 
+
+## e)
+
+```{r}
+raw.res <- Y - X%*%beta.hat
+y.hat <- X%*%beta.hat
+plot(X[, 2], raw.res, xlab="Pressure", ylab="Raw Residuals")
+```
+
+It looks like the residuals form a pattern of some sort, but it is hard to say exactly what sort of shape it is making. It looks like an inverted U-shape. 
+
+## f)
+
+* Linearity of covariate effects: The covariate-response plot shows that the relationship looks to be quite linear. 
+* Homoscedasticity of errors: The residuals do not look homoscedastic, since they follow an inverted U-shape. This means that this assumption looks to be violated by the data. 
+* Uncorrelated errors: Based on the residual-covariate plot, the errors look to be correlated, which is another violation of the model assessments.
+* Additivity of errors: \textcolor{red}{I am not quite sure how to say anything about this from the plots.}
+
+How can we investigate if the errors are normally distributed? Can plot a Q-Q-plot of residuals, i.e. theoretical quantiles of the normal distribution and the residuals from the model. If they seem to be linear, the errors seem to be normally distributed. 
+
+
+## g)
+
+```{r}
+newds <- data.frame(bp = (forbes$bp - 32) * 5 / 9,pres = forbes$pres * 0.033863882)
+lm1 <- lm(bp ~ pres, data = newds)
+summary(lm1)
+library(GGally)
+ggpairs(lm1)
+
+library(ggfortify)
+autoplot(lm1)
+
+par(mfrow = c(1, 2)) # change number of subplots in a window
+plot(lm1, which = c(1, 2))
+```
+
+# Problem 2 \hspace{3mm} Results on $\hat{\boldsymbol{\beta}}$ and SSE in multiple linear regression
+
+
