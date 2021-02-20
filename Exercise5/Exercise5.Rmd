@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F, cache = T)
 ```
 
 # Problem 1 \hspace{3mm} Simple linear regression
@@ -44,7 +44,7 @@ beta.hat <- solve(t(X)%*%X)%*%t(X)%*%Y
 beta.hat
 ```
 
-To a layperson, I would say that these numbers mean the following. When the pressure is zero, the boiling point is estimated to being at $\sim$ `r beta.hat[1]` degress and for each unit the pressure is increased, the boiling point is estimated to increase by $\sim$ `r beta.hat[2]` degrees. 
+To a layperson, I would say that these numbers mean the following. When the pressure is zero, the boiling point is estimated to being at $\sim$ `r beta.hat[1]` degrees and for each unit the pressure is increased, the boiling point is estimated to increase by $\sim$ `r beta.hat[2]` degrees. 
 
 ## e)
 
@@ -61,9 +61,15 @@ It looks like the residuals form a pattern of some sort, but it is hard to say e
 * Linearity of covariate effects: The covariate-response plot shows that the relationship looks to be quite linear. 
 * Homoscedasticity of errors: The residuals do not look homoscedastic, since they follow an inverted U-shape. This means that this assumption looks to be violated by the data. 
 * Uncorrelated errors: Based on the residual-covariate plot, the errors look to be correlated, which is another violation of the model assessments.
-* Additivity of errors: \textcolor{red}{I am not quite sure how to say anything about this from the plots.}
+* Additivity of errors: \textcolor{red}{Not sure how to check this from the two plots, but several of the other assumptions seem to be violated, so it does not matter too much in this case.}
 
-How can we investigate if the errors are normally distributed? Can plot a Q-Q-plot of residuals, i.e. theoretical quantiles of the normal distribution and the residuals from the model. If they seem to be linear, the errors seem to be normally distributed. 
+How can we investigate if the errors are normally distributed? Can plot a Q-Q-plot of residuals, i.e. theoretical quantiles of the normal distribution and the residuals from the model. If they seem to be linear, the errors seem to be normally distributed. Have a look in the plots in the next task. This can also be done by
+
+```{r}
+qqnorm(raw.res, pch = 20)
+qqline(raw.res)
+```
+
 
 
 ## g)
@@ -84,4 +90,63 @@ plot(lm1, which = c(1, 2))
 
 # Problem 2 \hspace{3mm} Results on $\hat{\boldsymbol{\beta}}$ and SSE in multiple linear regression
 
+## a) 
 
+$H$ is idempotent and symmetric, since
+
+$$
+H^2 = (X(X^TX)^{-1}X^T)(X(X^TX)^{-1}X^T) = X(X^TX)^{-1}X^T = H
+$$
+
+and 
+
+$$
+H^T = (X(X^TX)^{-1}X^T)^T = (X((X^TX)^{-1})^TX^T) = (X((X^TX)^T)^{-1}X^T) = (X(X^TX)^{-1}X^T) = H.
+$$
+
+Since $H$ is idempotent we know that $\text{rank}H = \text{tr}H = \text{tr}(X(X^TX)^{-1}X^T) = \text{tr}((X^TX)^{-1}X^TX) = \text{tr}I = p$, where the third equality follows from the fact that the trace is invariant under cyclic permutations. I would interpret the vector $H\boldsymbol{Y}$ as being the orthogonal projection of $\boldsymbol{Y}$ onto $\text{Col}X$. 
+
+$I- H$ is also idempotent and symmetric, which can be checked via direct calculation also
+
+$$
+(I- H)^2 = (I - H)(I- H) = I - IH - HI + H^2 = I - H - H + H = I - H
+$$
+
+and 
+
+$$
+(I- H)^T = I^T - H^T = I - H.
+$$
+Since $I-H$ is idempotent, we know that $\text{rank}(I-H) = \text{tr}(I-H) = \text{tr}I - \text{tr}H = n - p$. I would interpret the vector $(I-H)\boldsymbol{Y}$ as being the part of $\boldsymbol{Y}$ that is perpendicular to $\text{Col}X$ after an orthogonal projection of $\boldsymbol{Y}$ onto $\text{Col}X$. In other words $(I-H)\boldsymbol{Y}$ is the orthogonal projection onto the orthogonal complement of $\text{Col}X$. 
+
+## b)
+
+Let SSE := $\boldsymbol{Y}^T(I-H)\boldsymbol{Y}$ and $\boldsymbol{\epsilon} \sim N(0, \sigma^2I)$. We know that $\frac{1}{\sigma^2}\boldsymbol{Z}^TD\boldsymbol{Z} \sim \chi_r^2$, when $D$ is an idempotent and symmetric matrix with rank $r$ and $\boldsymbol{Z} \sim N(0, \sigma^2I)$. This result can be applied here, since $\boldsymbol{Y} \sim N(X\boldsymbol{\beta}, \sigma^2I)$ and, hence, $\boldsymbol{Y} - X\boldsymbol{\beta} \sim N(0, \sigma^2I)$. This can be used because $(I-H)X\boldsymbol{\beta} = 0$, which gives
+
+$$
+\frac{\text{SSE}}{\sigma^2} = \frac{1}{\sigma^2}\boldsymbol{Y}^T(I-H)\boldsymbol{Y} = \frac{1}{\sigma^2}(\boldsymbol{Y}-X\boldsymbol{\beta})^T(I-H)(\boldsymbol{Y}-X\boldsymbol{\beta}) \sim \chi_{n-p}^2, 
+$$
+
+since, as noted in a), $I-H$ is idempotent and symmetric and $\text{rank}(I-H) = n - p$. Since the expected value of a chi-squared distributed random variable is its degrees of freedom
+
+$$
+\text{E}\left(\frac{\text{SSE}}{\sigma^2}\right) = \frac{1}{\sigma^2}\text{E}(\text{SSE}) = n-p, 
+$$
+
+which leads to the following suggestion of an unbiased estimator of $\sigma^2$
+
+$$
+\widehat{\sigma^2} = \frac{\text{SSE}}{n-p}. 
+$$
+
+The variance of $\widehat{\sigma^2}$ is 
+
+$$
+\text{Var}(\widehat{\sigma^2}) = \text{Var}\left(\frac{\text{SSE}}{n-p}\right) = \text{Var}\left(\frac{\sigma^2}{n-p}\frac{\text{SSE}}{\sigma^2}\right) = \frac{\sigma^4}{(n-p)^2}\text{Var}\left(\frac{\text{SSE}}{\sigma^2}\right) = \frac{\sigma^4}{(n-p)^2} \cdot 2 (n-p) = \frac{2\sigma^4}{n-p}, 
+$$
+
+since we know that the variance of a chi-squared distributed random variable is two times its degrees of freedom.
+
+## c)
+
+Let $A := (X^TX)^{-1}X^T$ and $B := I-H$. The dimensions of these matrices are $A \in \mathbb{R}^{p \times n}$ and $B \in \mathbb{R}^{n \times n}$. $A\boldsymbol{Y}$ and $B\boldsymbol{Y}$ are independent random vectors because $\text{Cov}(B\boldsymbol{Y}, A\boldsymbol{Y}) = B\text{Cov}(\boldsymbol{Y})A^T = \sigma^2 (I-H)((X^TX)^{-1}X^T)^T = \sigma^2 (I-H)X(X^TX)^{-1} = 0$, since $(I-H)X = X - X = 0$. This means that $\hat{\boldsymbol{\beta}}$ and SSE are independent random variables because $A\boldsymbol{Y} = (X^TX)^{-1}X^T\boldsymbol{Y} = \hat{\boldsymbol{\beta}}$ and $(B\boldsymbol{Y})^T(B\boldsymbol{Y}) = \boldsymbol{Y}^TB\boldsymbol{Y} = \boldsymbol{Y}^T(I-H)\boldsymbol{Y} = \text{SSE}$ must be independent also. This independence is used to construct t-tests for the components $\beta_j$ of $\boldsymbol{\beta}$. 
