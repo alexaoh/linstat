@@ -1,0 +1,56 @@
+---
+title: "Compulsory Exercise 2 in TMA4267 Statistical Linear Models, Spring 2021"
+author: "Sander Ruud, Alexander J Ohrt"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", warning = FALSE, message=FALSE)
+```
+
+# Problem 1 \hspace{3mm} Diabetes Progression
+
+## a)
+
+1. Each column and the formula which it is based upon is given in the list below. 
+
+* `Estimate`: $\hat{\boldsymbol{\beta}} = (X^TX)^{-1}X^T\boldsymbol{Y}$, where $\boldsymbol{Y}$ are all the response variables, i.e. `prog` in this case. Moreover, the components $\beta_j$ in $\boldsymbol{\beta}$ are estimates of the coefficients in the assumed linear relationship between the covariates and the response (`prog`). 
+* `Std. Error`: \textcolor{red}{Can check in the code acidrain.R later, do not remember this right now.}
+* `t value`: t value calculated in the t-test for each component of $\boldsymbol{\beta}$. This is used to test whether the null hypothesis (that $\beta_j = 0, \forall j$) seems reasonable or if it should be discarded. The quantities used when calculating this value are the components of $\boldsymbol{\beta}$ and the estimate of the standard error $\widehat{\sigma^2}$. \textcolor{red}{Which probably is the one in the column prior to this one. Fix/add later. Also explain some more here perhaps.}
+* `Pr(>|t|)`: p value calculated from the t value in the previous column. This can be used to make a conclusion about the significance level of each of the components $\beta_j$ in $\boldsymbol{\beta}$, i.e. to reason about whether or not each of the estimators should be used in the model for predictive or inferential power. 
+
+2. We interpret the estimate for the interceipt in the following way: This value is estimated to be attained when all the covariates are zero, i.e. when each patient is a female and the rest of the continuous predictors are zero-valued. 
+
+3. The estimated regression coefficient for `bmi` can be interpreted as begin the estimated increase in the response, `prog`, when the value of `bmi` is increased by one unit. 
+
+4. The estimated error variance can be found in ... \textcolor{red}{Ikke helt sikker på hva dette er}
+
+5. `tc` is found to be significant at level 0.05, and `sex`, `bmi`, `map` and `ltg` are significant at lower levels than 0.05. E.g. the null- and alternative hypothesis associated with a hypothesis test on `tc` are $H_0: \beta_{tc} = 0$ vs. $H_1: \beta_{tc} \neq 0$. The assumptions needed for the p-value to be valid are \textcolor{red}{That the estimators for $\beta$ and $\sigma^2$ are independent ? Something else?}
+
+## b)
+
+Based on Figures 1 and 2 we would evaluate the fit of the full model as pretty well aligned with the assumptions of the linear model. The p-value of the F-statistic is small, which signifies that the covariates could be useful when predicting or inferring something about the population behind the data. Moreover, the residuals look to be homoscedastic and without a clear pattern. Also the normal Q-Q plot shows some deviation between the theoretical quantiles and the sample quantiles, but these do not seem to clearly break the assumption of normally distributed errors. 
+
+As noted, the p-value of the F-statistic is relatively low, which means that the regression is significant. The null- and alternative hypotheses for this test are $H_0: \beta_j = 0 \,\, \forall j$ vs. $H_1: \text{At least one } \beta_j \neq 0$. 
+
+The `Multiple R-squared` is the ratio of total variance explained by the model. 
+
+## c) 
+
+A reduced model might have better performance than a full model when the aim is prediction because/in cases where \textcolor{red}{kommer ikke på noen åpenbare årsaker til dette akkurat nå. For predikjson skulle jeg tro at den større modellen er bedre egentlig...}
+
+```{r}
+# reduced model we choose. 
+```
+
+
+## d)
+
+```{r}
+fitd <- lm() # have not been given any data as far as I can see. 
+```
+
+
+# Problem 2 \hspace{3mm} Multiple testing

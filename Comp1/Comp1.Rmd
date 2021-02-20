@@ -1,5 +1,5 @@
 ---
-title: "Compulsory Exercise 1 in Statistical Linear Models, Spring 2021"
+title: "Compulsory Exercise 1 in TMA4267 Statistical Linear Models, Spring 2021"
 author: "Sander Ruud, Alexander J Ohrt"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
