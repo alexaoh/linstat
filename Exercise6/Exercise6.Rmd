@@ -1,0 +1,93 @@
+---
+title: "Recommended Exercise 6 in Statistical Linear Models, Spring 2021"
+author: "alexaoh"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F, cache = T)
+```
+
+# Problem 1 \hspace{3mm} Orthogonally projecting matrices
+
+Show that $R^T(I-R) = O$ iff $R$ is symmetric and idempotent. 
+
+Assume that $R$ is symmetric and idempotent. The, $R^T(I-R) = R^T - R^T R = R - R^2 = R - R = O$. 
+
+Conversely, assume that $R^T(I-R) = O$ holds. Then, $R^T = R^TR$. Hence, $R$ is symmetric since $R = (R^TR)^T = R^TR = R^T$. Also, $R$ is idempotent, since $R = R^TR = RR = R^2$, from the assumption. $square$
+
+# Problem 2 \hspace{3mm} Period of swing of pendulum
+
+```{r}
+pendulum.data <- read.table("https://www.math.ntnu.no/emner/TMA4267/2018v/pendulum.txt")
+model1 <- lm(Period~Length+Amplitude+Mass, data = pendulum.data)
+summary(model1)
+```
+
+## a) 
+
+The fitted regression model has the form 
+
+$$
+\hat{\boldsymbol{Y}} = \hat{\beta_0} + \hat{\beta}_{\text{Length}}x_{\text{Length}} + \hat{\beta}_{\text{Amp}}x_{\text{Amp}} + \hat{\beta}_{\text{Mass}}x_{\text{Mass}}, 
+$$
+
+where the $x$-values are observed values of each of the predictors, and $\hat{\boldsymbol{Y}}$ is a prediction of the response, i.e. the period, based on the model estimates and the values of the predictors. When adding the values from the model, the regression fit takes the form 
+
+$$
+\hat{T} = 0.439 + 0.0197\cdot L + 0.0448\cdot A+0.0232\cdot m,  
+$$
+
+where the response is given the name $T$ and each of the predictors are $L$, $A$ and $m$, for length, amplitude and mass respectively. According to the $R^2$, the model explains `r round(summary(model1)$r.squared, digits = 3)` % of the variance. The p-value of the F-statistic shows that the null-hypothesis in the multiple hypothesis test, i.e. that all coefficients are zero, will be discarded, since it is significant. Moreover, the length, mass and interceipt have significant p-values, which indicates that the null-hypothesis in each of their simple hypothesis tests should be discarded as well. 
+
+From the residual plot, one can conclude that the errors are not homoscedastic. They follow a clear shape, which looks to be an inverted U, perhaps a $-x^2$. This suggests that the linear model is wrong. The Box-Cox plot below suggests that a transformation of the response $T$ of the kind $T^2$ would be smart. 
+
+```{r}
+sres1 <- rstudent(model1)
+plot(model1$fitted.values,sres1)
+library(MASS)
+boxcox(model1,lambda=seq(1,3,.1))
+```
+
+## b)
+
+```{r}
+model2 <- lm(Period^2~Length+Amplitude+Mass-1, data = pendulum.data)
+summary(model2)
+
+sres2 <- rstudent(model2)
+plot(model2$fitted.values,sres2)
+attach(pendulum.data)
+pendulum <- as.data.frame(cbind(Period,Length,Amplitude,Mass)) 
+library(leaps)
+best <- regsubsets(Period^2~.,data=pendulum,intercept=FALSE)
+summary(best)$which
+summary(best)$cp
+plot(best,scale="Cp")
+```
+
+Based on the residual plot alone, I would much prefer this model over the former `model1`. This has no clear pattern in the residuals, which does not indicate any grave mistakes in the model assumptions. Considering the fact that Mallows' $C_p$ should be as small as possible, the best of the submodels includes the length and the amplitude, since this gives the lowest value for $C_p$ according to the given data.  
+
+## c)
+
+```{r}
+model3 <- lm(log(Period)~log(Length)+log(1+Amplitude^2/16+11*Amplitude^4/3072), data = pendulum.data)
+summary(model3)
+```
+
+The coefficient for $\text{log}($Length$)$ agrees with the theory, which states that it should be $\frac12$. Moreover, the coefficient for $\text{log}($1 + $\dots)$ should be 1 according to theory, and is estimated to being $\approx$ `r round(coefficients(model3)[3], digits = 3)`, which is an error of $\approx$ `r round(1 - 1/coefficients(model3)[3], digits = 3) * 100` %. It is worth to note that the standard error of this estimate is large. An estimate of $g$ is `r round(((2*pi)/exp(coefficients(model3)[1]))^2, digits = 3)` cm/s, which is $\approx$ `r round(((2*pi)/exp(coefficients(model3)[1]))^2 / 1e2, digits = 3)` m/s. 
+
+To calculate a 95% confidence interval we use the fact that 
+
+\textcolor{red}{Gjør denne skikkelig senere! Hvordan kan de si det de sier om fordelingen til beta? Hva skjer med c_i i nevneren, dvs diagonal i (X^TX)^{-1}? (se notater fra forelesning). Se mer på denne}
+
+
+# Problem 3 \hspace{3mm} Galápagos species
+
+## a)
+
+
+
+
+
