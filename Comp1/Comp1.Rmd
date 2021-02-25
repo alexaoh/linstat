@@ -98,7 +98,7 @@ Sigma.Y
 
 ## b)
 
-By using the method of diagonalization one can show that the contours of a vector that has a multivariate Gaussian distribution are ellipsoids. Moreover, one can show that the axes of the ellipsoids have direction along the eigenvectors of the covariance matrix $\Sigma$ and half-lengths $\sqrt{\lambda_i}b$ for, where $\lambda_i$ are the eigenvalues of $\Sigma$. More specifically, each of the half axes are given, in descending order based on length, by $\sqrt{\lambda_i}b$ with direction following each respective eigenvector $\mathbf{p}_i, \, i = 1, \dots, k$ for $\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_k$, where $k$ is the dimension of the multivariate Gaussian distribution. 
+By using the method of diagonalization one can show that the contours of a vector that has a multivariate Gaussian distribution are ellipsoids. Moreover, one can show that the axes of the ellipsoids have direction along the eigenvectors of the covariance matrix $\Sigma$ and half-lengths $\sqrt{\lambda_ib}$ for, where $\lambda_i$ are the eigenvalues of $\Sigma$. More specifically, each of the half axes are given, in descending order based on length, by $\sqrt{\lambda_ib}$ with direction following each respective eigenvector $\mathbf{p}_i, \, i = 1, \dots, k$ for $\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_k$, where $k$ is the dimension of the multivariate Gaussian distribution. 
 
 <!-- The probability that $\boldsymbol{X}$ falls within the given ellipse is -->
 
@@ -129,29 +129,24 @@ v1 <- eigen(sigma)$vectors[,1]
 lam2 <- eigen(sigma)$values[2]
 v2 <- eigen(sigma)$vectors[,2]
 
-l1 = 2*sqrt(qchisq(0.9,2)) * sqrt(lam1)
-l2 = 2*sqrt(qchisq(0.9,2)) * sqrt(lam2)
+l1 = sqrt(qchisq(0.9,2)*lam1)
+l2 = sqrt(qchisq(0.9,2)*lam2)
 
-#l1 <- qchisq(0.9,2) * sqrt(lam1)
-#l2 <- qchisq(0.9,2) * sqrt(lam2)
+# The vectors are already normalized in R.
+x1 = (v1*l1)[1]
+x2 = (v1*l1)[2]
 
-x1 = (v1/length(v1)*l1)[1]
-x2 = (v1/length(v1)*l1)[2]
-
-x3 = (v2/length(v2)*l2)[1]
-x4 = (v2/length(v2)*l2)[2]
+x3 = (v2*l2)[1]
+x4 = (v2*l2)[2]
 
 ellipse(c(mu_x, mu_y), sigma, alpha = 0.1, newplot=TRUE, type='l')
 lines(c(mu_x, x1+mu_x), c(mu_y, x2+mu_y), col = "blue")
-text(2,2.7, labels=TeX("$2\\sqrt{b}\\sqrt{\\lambda_1}$"))
+text(2,2.7, labels=TeX("$\\sqrt{b\\lambda_1}$"))
 lines(c(mu_x, x3+mu_x), c(mu_y, x4+mu_y), col = "red")
-text(-1.8,2.2, labels=TeX("$2\\sqrt{b}\\sqrt{\\lambda_2}$"))
-
+text(-1.8,2.2, labels=TeX("$\\sqrt{b\\lambda_2}$"))
 ```
 
-The major half-axis, in blue, shows $\sqrt{\lambda_1}b\frac{\boldsymbol{p_1}}{|\boldsymbol{p_1}|}$, i.e. the length $\sqrt{\lambda_1}b$ in the direction of the first eigenvector of $\Sigma$. Similarly, the minor half-axis, in red, shows $\sqrt{\lambda_2}b\frac{\boldsymbol{p_2}}{|\boldsymbol{p_2}|}$.
-
-\textcolor{red}{Vi må spørre om hvorfor det som er tegnet ovenfor gir rett figur, mens det som er utledet i teorien er helt feil!?}
+The major half-axis, in blue, shows $\sqrt{\lambda_1b}\frac{\boldsymbol{p_1}}{|\boldsymbol{p_1}|}$, i.e. the length $\sqrt{\lambda_1b}$ in the direction of the first eigenvector of $\Sigma$. Similarly, the minor half-axis, in red, shows $\sqrt{\lambda_2b}\frac{\boldsymbol{p_2}}{|\boldsymbol{p_2}|}$.
 
 # Problem 2 \hspace{3mm} Distributional results for $\overline{X}$ and $S^2$ for a univariate normal sample
 
