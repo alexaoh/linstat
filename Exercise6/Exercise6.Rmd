@@ -13,9 +13,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, war
 
 Show that $R^T(I-R) = O$ iff $R$ is symmetric and idempotent. 
 
-Assume that $R$ is symmetric and idempotent. The, $R^T(I-R) = R^T - R^T R = R - R^2 = R - R = O$. 
+Assume that $R$ is symmetric and idempotent. Then, $R^T(I-R) = R^T - R^T R = R - R^2 = R - R = O$. 
 
-Conversely, assume that $R^T(I-R) = O$ holds. Then, $R^T = R^TR$. Hence, $R$ is symmetric since $R = (R^TR)^T = R^TR = R^T$. Also, $R$ is idempotent, since $R = R^TR = RR = R^2$, from the assumption. $square$
+Conversely, assume that $R^T(I-R) = O$ holds. Then, $R^T = R^TR$. Hence, $R$ is symmetric since $R = (R^TR)^T = R^TR = R^T$. Also, $R$ is idempotent, since $R = R^TR = RR = R^2$, from the assumption. $\square$
 
 # Problem 2 \hspace{3mm} Period of swing of pendulum
 
