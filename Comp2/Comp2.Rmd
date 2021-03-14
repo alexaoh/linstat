@@ -1,0 +1,131 @@
+---
+title: "Compulsory Exercise 2 in TMA4267 Statistical Linear Models, Spring 2021"
+author: "Sander Ruud, Alexander J Ohrt"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", warning = FALSE, message=FALSE)
+```
+
+# Problem 1 \hspace{3mm} Diabetes Progression
+
+## a)
+
+1. Each column and the formula which it is based upon is given in the dotted list below. 
+
+* `Estimate`: $\hat{\boldsymbol{\beta}} = (X^TX)^{-1}X^T\boldsymbol{Y}$, where $\boldsymbol{Y}$ contains all the response variables, i.e. `prog` in this case. Moreover, the components $\beta_j$ in $\boldsymbol{\beta}$ are estimates of the coefficients in the assumed linear relationship between the covariates and the response (`prog`): $\boldsymbol{Y} = X\boldsymbol{\beta} + \boldsymbol{\varepsilon}$, where $\boldsymbol{Y} \sim N(X\boldsymbol{\beta}, \sigma^2I)$. 
+* `Std. Error`: This column is calculated from the formula $\sqrt{\frac{\text{SSE}}{n-p}(X^TX)_{ii}^{-1}}$, where $(X^TX)_{ii}^{-1}$ are the diagonal elements of the matrix $(X^TX)^{-1}$. Moreover, $\text{SSE} = \sum \hat{\varepsilon}_i^2 = \boldsymbol{Y}^T(I-H)\boldsymbol{Y}$, where $H = X(X^TX)^{-1}X^T$ is called the Hat matrix and $\hat{\boldsymbol{\varepsilon}} = (\hat{\varepsilon}_1, \dots, \hat{\varepsilon}_n)^T$. Also, $n$ is the amount of observations in the data and $p$ is the amount of covariates in the linear model. Since $\hat{\boldsymbol{\beta}} \sim N(\boldsymbol{\beta}, \sigma^2(X^TX)^{-1})$, it is apparent that the column `Std. Error` is an estimate of the standard deviance ( \textcolor{purple}{Deviation?}). of each component $\beta_i, \hspace{1mm} i = 1, \dots, p-1,$ of $\boldsymbol{\beta}$. This is true because $\hat{\sigma}^2 = \frac{\text{SSE}}{n-p}$ is an unbiased estimator of $\sigma^2$ and, hence, $\hat{\sigma}^2(X^TX)_{ii}^{-1}$ is an unbiased estimator of $\text{Cov}(\hat{\boldsymbol{\beta}})$. Moreover, the covariance matrix has the variances on its diagonal, which is the square of what is estimated by `Std. Error`. 
+* `t value`: t value calculated in a t-test for each component of $\boldsymbol{\beta}$, given by $H_0: \beta_i = 0 \hspace{1mm} \text{vs.} \hspace{1mm} H_1: \beta_i \neq 0$. This is used to test whether the null hypothesis seems reasonable or if there is enough evidence to discard it. The test statistic used in each test is $T = \frac{\hat{\beta_i} - \beta_i}{\hat{\sigma}\sqrt{(X^TX)_{ii}^{-1}}} = \frac{\hat{\beta_i}}{\hat{\sigma}\sqrt{(X^TX)_{ii}^{-1}}} \sim t_{n-p}$, given $H_0$. The value of each of the test statistics are the values in the column `t value` from `summary(full)`. 
+* `Pr(>|t|)`: p value calculated from the t value in the previous column. It is calculated from the formula $2P\left(T \geq \frac{|\hat{\beta_i}|}{\hat{\sigma}\sqrt{(X^TX)_{ii}^{-1}}}\right)$. This can be used to make a conclusion about the significance of each of the components $\beta_j$ in $\boldsymbol{\beta}$, i.e. to reason about whether or not each of the estimators should be used in the model for predictive or inferential power. If the $p$-value is less than or equal to the chosen significance level, $H_0$ will be discarded. 
+
+2. We interpret the estimate for the intercept in the following way: This value is estimated to be attained when all the covariates are zero, i.e. when each patient is a female and the rest of the continuous predictors are zero-valued. 
+
+3. The estimated regression coefficient for `bmi` can be interpreted as being the estimated increase in the response, `prog`, when the value of `bmi` is increased by one unit.
+
+4. The estimated error variance \textcolor{red}{Litt usikker på hva dette faktisk er!? Men tror det er følgende: }\textcolor{purple}{Jeg tolket det også sånn.} can be found in the field that says `Residual standard error` $= 54.16$. The formula for calculating this value is $\hat{\sigma}^2 = \frac{\text{SSE}}{n-p}$.
+
+5. `tc` is found to be significant at level 0.05, and `sex`, `bmi`, `map` and `ltg` are significant at lower levels than 0.05. E.g. the null- and alternative hypothesis associated with a hypothesis test on `tc` are $H_0: \beta_{tc} = 0$ vs. $H_1: \beta_{tc} \neq 0$. The assumptions needed for the $p$-value to be valid are that the estimators for $\beta$ and $\sigma^2$ are independent. Also, a valid $p$-value $W$ fulfills $P(\text{discard } H_0) = P(W \leq \alpha) \leq \alpha$ \textcolor{purple}{Ser riktig ut det?}, given that the null hypothesis is true. Here, $\alpha$ is the chosen significance level, i.e. the greatest probability of type I-errors we are willing to accept. 
+
+## b)
+
+Based on Figures 1 and 2 we would evaluate the fit of the full model as not very well aligned with the assumptions of the linear model. Immediately, when looking at the `pairs`-plot, there is no clear linear relationship between any of the predictors and `prog`. Also, it looks like the residuals increase slightly towards the middle of the $x$-axis of the residual versus fitted values-plot. This means that the homoscedasticity of the residuals is questionable. Moreover, the normal Q-Q plot shows some deviation between the theoretical quantiles and the sample quantiles at the endpoints, but it is hard to say whether or not they clearly break the assumption of normally distributed errors. Finally, the output of the Anderson-Darling normality test shows that the p-value is quite large, which means we can't reject the hypothesis of no normality.
+
+
+ \textcolor{red}{which signals that the errors are not normally distributed.Enig? Spesielt usikker på denne siste setningen. }
+ \textcolor{purple}{Ja, tolker det som at de ikke er normally distributed? Er ikke testen at han antar at det ikke følger en fordeling, og en lav p-verdi viser at det er usannsynlig å se det vi ser gitt at dataet ikke følger en normalfordeling.}
+
+
+As a second note, the p-value of the F-statistic is relatively low, which means that there is enough evidence to discard the null hypothesis, i.e. the regression is significant. The null- and alternative hypotheses for this test are $H_0: \beta_j = 0 \,\, \forall j \in \{1,..., k\}$ vs. $H_1: \text{At least one } \beta_j \neq 0$. 
+
+# This further increases the suspicion that the full linear model is not very useful for this data. 
+# Uenig: Er ikke det motsatt?
+
+The `Multiple R-squared` is the ratio of total variance explained by the model. It is calculated as 
+
+$$
+R^2 = \frac{\text{SSR}}{\text{SST}} = 1 - \frac{\text{SSE}}{\text{SST}} = 1 - \frac{\boldsymbol{Y}^T(I-H)\boldsymbol{Y}}{\boldsymbol{Y}^T(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)\boldsymbol{Y}}.
+$$
+
+The value of the multiple R-squared is 0.5176, which means that the model only explains approximately half of the total variance in the data. 
+
+
+
+
+## c) 
+
+A reduced model might have better performance than a full model when the aim is prediction because the variance of the estimated covariates is lower for a reduced model. This means that we can make more accurate predictions with a smaller model compared to the larger model. 
+
+In best subset selection, all subsets of the $k$ covariates are used to fit a linear model. In the end, the model that is considered the best among all these models is the one we choose. For each number $j$ of covariates from 1 to $k$, we fit all models with $j$ covariates and store the best model among all these, based on $\text{SSE}$ or $R^2$. In the end, we choose the best among the zero-model, which is the model containing only the intercept, and all the stored models with $j$ covariates. When choosing the best among these models, we need to use other model choice criteria than $\text{SSE}$ or $R^2$, since these always decrease with the amount of covariates. Two options of criteria are $R_{\text{adj}}^2$ or $\text{BIC}$, which penalize larger models in order to choose the best model more objectively. 
+
+With this in mind, the 10 models presented in Figure 3 were found by:
+
+1) Fit $j$ models for each $j$ from $1$ to $k$. 
+2) Among all these $j$ models, choose the best one, based on $\text{SSE}$ or $R^2$.
+
+Based on the results presented in Figure 3 and 4, the best reduced regression model is the model with 5 covariates. This is because $\text{BIC}$ has a minimum for this model. This model consists of the intercept and the covariates `sex`, `bmi`, `map`, `hdl` and `ltg`. This means that the linear model is given by 
+
+$$
+Y_i = \beta_0 + \beta_{\text{s}}x_{i\text{s}} + \beta_{\text{b}}x_{i\text{b}} + \beta_{\text{m}}x_{i\text{m}} + \beta_{\text{h}}x_{i\text{h}} + \beta_{\text{l}}x_{i\text{l}}
+$$
+
+```{r}
+ds <- read.csv("https://web.stanford.edu/~hastie/CASI_files/DATA/diabetes.csv", sep = ",")
+reduced.fit <- lm(prog~sex + bmi + map + hdl + ltg, data = ds)
+summary(reduced.fit)
+```
+
+The estimated regression parameters have changed compared to the larger model. The interceipt has been heavily increased, while $\hat{\beta}_{\text{l}}$ and the estimate for the covariate of `hdl` have been significantly reduced. The other estimates are very similar. \textcolor{red}{Kan disse endringene forklares da?} \textcolor{purple}{Hva mener du med at $\beta_1$ har blitt mindre? Er ikke det estimatet for sex? Tror ikke det trengs å forklares noe mer enn det du har gjort under. Ser bra ut!}
+
+The estimated standard deviations are reduced in the reduced model compared to the larger model. They are quite similar for the parameters `sex`, `bmi` and `map`, and are heavily reduced for the intercept and the parameters `hdl` and `ltg`. This is a result of the fact that, as noted earlier, the variance of each estimated covariate is smaller in the reduced model compared to a larger model. 
+
+## d)
+
+```{r}
+full.fit <- lm(prog~., data = ds)
+```
+
+```{r}
+anova(full.fit, reduced.fit)
+```
+
+From the test on the full model, it becomes apparent that it does not confirm that the reduced model is preferable, since the p-value is given by 0.1523. which is not significant in most cases. 
+
+# Problem 2 \hspace{3mm} Multiple testing
+
+## a)
+
+```{r}
+pvalues <-scan("https://www.math.ntnu.no/emner/TMA4267/2018v/pvalues.txt")
+length(pvalues[pvalues<0.05])
+```
+When assuming that we reject all null-hypotheses with corresponding p-values below 0.05 we want to know how many null-hypotheses we end up rejecting. From the output above, we see that we end up rejecting `r length(pvalues[pvalues<0.05])` p-values in this case. A false positive finding, i.e. a type I error, is a case where the null-hypothesis is rejected despite it being true. The number of false positive findings is not known in our data, but it is possible to find a level that gives an upper limit to the probability of at least one false positive finding (FWER) (as we will discuss a bit later).
+
+## b)
+
+The definition of familywise error rate (FWER) is the probability of one or more false positive findings $P(V > 0)$, where $V$ is the number of false positive findings among the $m$ tests ($m = 1000$ in this case). 
+
+To control FWER at level 0.05 means that the maximum probability of at least one false positive finding in the data is 0.05. 
+
+When using Bonferroni's method we should use $\alpha_{\text{loc}} = 0.05/1000 = 5 \cdot 10^{-5}$, if we want to control FWER at 0.05. With this new level we will reject `length(pvalues[pvalues<5e-5])` $=$ `r length(pvalues[pvalues<5e-5])` null-hypothesis in our data. 
+
+## c)
+
+```{r}
+pvaluesa <- ifelse(pvalues<0.05, "Reject", "Keep")
+pvaluesb <- ifelse(pvalues<5e-5, "Reject", "Keep")
+
+type1a <- sum(pvaluesa[1:900] == "Reject") 
+type2a <- sum(pvaluesa[900:1000] == "Keep") 
+type1a # Type 1 error in a)
+type2a # Type 2 error in a)
+
+type1b <- sum(pvaluesb[1:900] == "Reject") 
+type2b <- sum(pvaluesb[900:1000] == "Keep") 
+type1b # Type 1 error in b)
+type2b # Type 2 error in b)
+```
+\textcolor{red}{Dette synes jeg virker litt usannsynlig! Sjekk at det stemmer senere!}
+\textcolor{purple}{Jeg er enig i fremgangsmåten, fikk det samme}
