@@ -9,6 +9,8 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F, cache = T)
 ```
 
+\textcolor{red}{Gå skikkelig gjennom LF senere!}
+
 # Problem 1 \hspace{3mm} Inference about a new observation in multiple linear regression
 
 ## a)
@@ -89,7 +91,45 @@ predict(fit, newdata, level=.95, interval="prediction")
 
 ## e)
 
+Calculate $\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0$ with $\boldsymbol{x}_0^T = (1 \hspace{3mm} x_0)$ and 
+
+$$
+X^T = 
+\begin{pmatrix} 
+    1 & 1 & 1 & \dots & \dots & 1\\
+    x_1 & x_2 & x_3 & \dots & \dots & x_n
+\end{pmatrix}.
+$$
+
+This, combined with the rest of the expression for the confidence interval from *b)*, gives the desired expression for simple linear regression. 
+
 # Problem 2 \hspace{3mm} Plant stress
+
+## a)
+
+* t-value for intercept is missing: This is calculated by the test statistic $\hat{\beta}_{\text{intercept}}/\hat{SE}^2 \approx 16.15942/0.04140 \approx$ `r round(16.15942/0.04140, digits = 4)`. This is the test statistic for testing $H_0: \hat{\beta}_{\text{intercept}} = 0$ vs. $H_1: \hat{\beta}_{\text{intercept}} \neq 0$. 
+
+* Std. Error for D:T is missing: This can be calculated from the same test statistic as in the last bullet point, since we know the t-value for D:T. Hence, $\hat{\beta}_{\text{D:T}}/\hat{SE} = t$ gives $\hat{SE} = \hat{\beta}_{\text{D:T}}/t \approx -0.00242/-0.058 \approx$ `r round(0.00242/0.058, digits = 4)`.
+
+* p-value for D:F:T is missing: This can be calculated as $2P(T \geq t) =$ `2*pt(2.198, 24, lower.tail = F)` $\approx$ `r 2*pt(2.198, 24, lower.tail = F)`. 
+
+* Multiple R-squared is missing: This can be calculated as $1 - \frac{\text{SSE}}{\text{SST}}$. $\text{SSE}$ can be calculated from the formula $(n-p)\hat{\sigma}^2 = (32-8)\hat{\sigma}^2 = 24\hat{\sigma}^2 \approx$ `r 24*0.2342^2`, where $\hat{\sigma}$ is found as `Residual Standard Error` in the summary-table. We also know the F-statistic, which is calculated as $\frac{\text{SSR}/(p-1)}{\text{SSE}/(n-p)} = \frac{(\text{SST}-\text{SSE})/(p-1)}{\text{SSE}/(n-p)} = \frac{(\text{SST}-\text{SSE})/(8-1)}{\text{SSE}/(32-8)} = \frac{(\text{SST}-\text{SSE})/7}{\text{SSE}/24} \approx 105.6$, which gives that $\text{SST} \approx$ `r (105.6*24*0.2342^2)*7/24 + 24*0.2342^2`. Finally, this gives $R^2 \approx$ `r 1-(24*0.2342^2)/((105.6*24*0.2342^2)*7/24 + 24*0.2342^2)`. 
+
+## b)
+
+An estimator could be $\hat{\gamma} = 2^{\hat{\beta}_F - \hat{\beta}_D}$. The expected value and variance of this estimator can be calculated using a first order Taylor expansion. Setting $h(x,y) = 2^{x-y}$ and using a Taylor expansion in $x$ and $y$ of first order gives 
+
+$$
+\begin{split}
+h(\hat{\beta}_F, \hat{\beta}_D) &\approx h(\beta_F, \beta_D) + h_{\hat{\beta}_F}(\beta_F, \beta_D)(\beta_F - \hat{\beta}_F) + h_{\hat{\beta}_D}(\beta_F, \beta_D)(\beta_D - \hat{\beta}_D) \\
+&= 2^{\beta_F-\beta_D} + 2^{\beta_F - \beta_D}(\beta_F - \hat{\beta}_F)\text{ln}(2) + 2^{\beta_F - \beta_D}(\beta_D - \hat{\beta}_D)\text{ln}(2), 
+\end{split}
+$$
+
+since $h_x(x,y) = \frac{\partial}{\partial x}h(x,y) =  \frac{\partial}{\partial x}2^{x-y} = \frac{\partial}{\partial x}\exp{((x-y)\text{ln}(2))} = 2^{x-y}\text{ln}(2)$. This means that $\text{E}(\hat{\gamma}) = \text{E}(2^{\hat{\beta}_F - \hat{\beta}_D}) = \text{E}(h(\hat{\beta}_F, \hat{\beta}_D)) \approx h(\beta_F, \beta_D) = 2^{\beta_F - \beta_D}$, since $\hat{\beta}_F$ and $\hat{\beta}_D$ are unbiased estimators of $\beta_F$ and $\beta_D$. Moreover, $\text{Var}(\hat{\gamma}) = \text{Var}(2^{\hat{\beta}_F - \hat{\beta}_D}) = \text{Var}(h(\hat{\beta}_F, \hat{\beta}_D)) \approx h_{\hat{\beta}_F}(\beta_F, \beta_D)^2\text{Var}(\hat{\beta}_F) + h_{\hat{\beta}_D}(\beta_F, \beta_D)^2\text{Var}(\hat{\beta}_D) = 2^{2(\beta_F - \beta_D)}(\text{ln}(2))^2(\text{Var}(\hat{\beta}_F)-\text{Var}(\hat{\beta}_D))$. 
+
+From Figure 1, we can get the numerical estimates of the moments, given as
+
 
 
 # Problem 3 \hspace{3mm} Multiple testing with plant stress
