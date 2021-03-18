@@ -31,17 +31,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", warning = FALSE,
 
 ## b)
 
-Based on Figures 1 and 2 we would evaluate the fit of the full model as not very well aligned with the assumptions of the linear model. Immediately, when looking at the `pairs`-plot, there is no clear linear relationship between any of the predictors and `prog`. Also, it looks like the residuals increase slightly towards the middle of the $x$-axis of the residual versus fitted values-plot. This means that the homoscedasticity of the residuals is questionable. Moreover, the normal Q-Q plot shows some deviation between the theoretical quantiles and the sample quantiles at the endpoints, but it is hard to say whether or not they clearly break the assumption of normally distributed errors. Finally, the output of the Anderson-Darling normality test shows that the $p$-value is quite large, which means that the normality test does not fail. Hence, we cannot state that the data does not fit the normal distribution, but we cannot state that it fits either. No significant departure from normality was found in the data. 
-
-
- \textcolor{red}{which signals that the errors are not normally distributed.Enig? Spesielt usikker på denne siste setningen. }
- \textcolor{purple}{Ja, tolker det som at de ikke er normally distributed? Er ikke testen at han antar at det ikke følger en fordeling, og en lav p-verdi viser at det er usannsynlig å se det vi ser gitt at dataet ikke følger en normalfordeling.} \textcolor{red}{Tror det er motsatt: Dersom H0 forkastes så kan man være relativt sikker på at de ikke er normalfordelt, men dersom H0 ikke forkastes vet man ikke om de er det, men man kan ikke utelukke det heller. (leste på lenken nedenfor)}
-https://variation.com/wp-content/distribution_analyzer_help/hs140.htm
+Based on Figures 1 and 2 we would evaluate the fit of the full model as not very well aligned with the assumptions of the linear model. Immediately, when looking at the `pairs`-plot, there is no clear linear relationship between any of the predictors and `prog`. Also, it looks like the residuals increase slightly towards the middle of the $x$-axis of the residual versus fitted values-plot. This means that the homoscedasticity of the residuals is questionable. Moreover, the normal Q-Q plot shows some deviation between the theoretical quantiles and the sample quantiles at the endpoints, but it is hard to say whether or not they clearly break the assumption of normally distributed errors. Finally, the output of the Anderson-Darling normality test shows that the $p$-value is quite large, which means that the normality test does not fail. Hence, we cannot state that the data does not fit the normal distribution. No significant departure from normality was found in the data. 
 
 As a second note, the $p$-value of the F-statistic is low, which means that there is enough evidence to discard the null hypothesis, i.e. the regression is significant. The null- and alternative hypotheses for this test are $H_0: \beta_j = 0 \,\, \forall j \in \{1,..., k\}$ vs. $H_1: \text{At least one } \beta_j \neq 0$. This means that the model seems to have some merit - we cannot confidently say that the regression is insignificant. 
-
-\textcolor{red}{Tenker du at modellen er god eller ikke da? Virker som at det finnes argumenter både for og imot her :(}
-\textcolor{blue}{Også var det dette med gyldigheten til en p-verdi lenger oppe som jeg lurte på om vi kunne diskutere.}
 
 The `Multiple R-squared` is the ratio of total variance explained by the model. It is calculated as 
 
