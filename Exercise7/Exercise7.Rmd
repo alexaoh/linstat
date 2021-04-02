@@ -47,7 +47,7 @@ which means that $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} \pm t_{\alpha/2}\ha
 
 ## c)
 
-A similar process to the one used in *b)* is used. For a future observation $Y_0$ we can derive that $Y_0 - \boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} \sim N(0, \sigma^2(1 + \boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0))$, since $Y_0 = \boldsymbol{x}_0^T\boldsymbol{\beta} + \varepsilon_0$ and $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}$ is an unbiased estimator of $EY_0$. Setting $Z = \frac{Y_0 - \boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}}{\sigma\sqrt{(1 + \boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0)}}$ and set $U$ as in *b)*. Solving the same inequalities as in *b)* then gives
+A similar process to the one used in *b)* is used. For a future observation $Y_0$ we can derive that $Y_0 - \boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} \sim N(0, \sigma^2(1 + \boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0))$, since $Y_0 = \boldsymbol{x}_0^T\boldsymbol{\beta} + \varepsilon_0$ and $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}$ is an unbiased estimator of $EY_0$. Set $Z = \frac{Y_0 - \boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}}{\sigma\sqrt{(1 + \boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0)}}$ and set $U$ as in *b)*. Solving the same inequalities as in *b)* then gives
 
 $$
 1-\alpha = P\left(\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} - t_{\alpha/2}\hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0} \leq Y_0 \leq \boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} + t_{\alpha/2}\hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0} \right),
