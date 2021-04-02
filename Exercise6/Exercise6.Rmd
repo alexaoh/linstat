@@ -122,13 +122,25 @@ From the plots, one can draw some conclusions. Firstly, the residuals do not loo
 
 The cube root transformation of the response is used in a new fitted model, using the same covariates as in the first model. The four missing numerical values from the new fit are 
 
-* Estimate for the intercept. This can be calculated from the t-value and the standard error: $7.365\cdot0.3052013 \approx 2.2478$. 
-* P-value for the t-test of `Area`. This can be approximately found using a table. Since the quantile for $\alpha = 0.025$ for a t-distribution with 24 degrees of freedom is 2.064, which is the closest quantile to the given t-value from the summary of the model, the p-value is approximately 0.05. 
+* Estimate for the intercept. This can be calculated from the t-value and the standard error: $7.365\cdot0.3052013 \approx 2.2478$. This is the first element of the vector of regression coefficient estimates $\hat{\boldsymbol{\beta}}$. 
+* P-value for the t-test of `Area`. This can be approximately found using a table. Since the quantile for $\alpha = 0.025$ for a t-distribution with 24 degrees of freedom is 2.064, which is the closest quantile to the given t-value from the summary of the model, the p-value is approximately 0.05. This is a test of the null hypothesis $H_0: \beta_{\text{Areav}} = 0$ vs the alternative hypothesis $H_a: \beta_{\text{Areav}} \neq 0$, when all the other predictors are kept in the model. 
 * Std. error of `Nearest`. This can be found from the t-value, used in the t-test of the covariate: $0.0118152/0.703 \approx 0.0168$. This is the estimated standard deviation of the coefficient estimate of `Nearest.`
-* Adjusted R-squared. This can be found by inserting into the formula that converts regular R-squared to the adjusted R-squared. 
+* Adjusted R-squared. This can be found by inserting into the formula that converts regular R-squared to the adjusted R-squared. This can be used for model selection or assessment when comparing models with different amounts of covariates. 
 
 I would prefer this model, with the cube root transformation, since the assumptions of a linear model seem to hold more closely in this case, based on the plots and the Anderson-Darling test, compared to the first model. The Anderson-Darling test does not reject the null-hypothesis of normal data. Also, the residual plot has no clear structure and the Q-Q-plot looks better for the new model compared to the old one. 
 
 ## c)
 
 Results from performing best subset selection are shown. 
+
+The definitions of $R^2$ and $R_{\text{adj}}^2$ are $R^2 = \frac{\text{SSR}}{\text{SST}} = 1 - \frac{\text{SSE}}{\text{SST}} = 1-\frac{\boldsymbol{Y}^T(I-H)\boldsymbol{Y}}{\boldsymbol{Y}^T(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)\boldsymbol{Y}}$ and $R^2_{\text{adj}} = 1 - \frac{\text{SSE}/(n-p)}{\text{SST}/(n-1)} = 1 - \frac{(\boldsymbol{Y}^T(I-H)\boldsymbol{Y})/(n-p)}{(\boldsymbol{Y}^T(I-\frac1n\boldsymbol{1}\boldsymbol{1}^T)\boldsymbol{Y})/(n-1)}$, where it is assumed that there are $p = k + 1$ covariates (including intercept). When comparing models with the same amount of covariates, $R^2$ is sufficient for model selection. Simply select the model with the highest $R^2$ for highest predictive power. However, when comparing models with different amounts of covariates, the use of $R_{\text{adj}}^2$ is necessary, since the $R^2$ always increases with increasing amounts of covariates in the model. Therefore, a penalization for larger models with "noisy"-predictors is introduced in $R_{\text{adj}}^2$, in order to do proper model selection. 
+
+Based on $R_{\text{adj}}^2$, the best model is the model with 4 covariates, i.e. the model with the largest value. This model uses the covariates `Area`, `Elevation`, `Scruz` and `Adjacent` (+ intercept). 
+
+The Lasso performs regularization or variable selection, since it penalizes larger models in the $\ell^1$-norm, i.e. the term $\lambda\sum_{j=1}^p|\beta_j|$ is added to the usual term $(\boldsymbol{Y} - X\boldsymbol{\beta})^(\boldsymbol{Y} - X\boldsymbol{\beta})T$, when optimizing, where $\lambda \geq 0$ is a penalty parameter. When $\lambda = 0$ estimates become the regular least squares estimates, but when $\lambda \rightarrow \infty$ all predictors are set to zero. The $R_{\text{adj}}^2$ can be used to select the penalty parameter in the Lasso, because it does not depend on $\lambda$. The number of covariates that should enter into the $R_{\text{adj}}^2$-formula is not defined, since the Lasso shrinks the coefficients by different amounts, and there is no way to insert $\lambda$ into the formula for the adjuster $R^2$. 
+
+The fitted regression model from the Lasso, found by CV, is 
+
+$$
+\widehat{\text{Species}^{1/3}} = 3.5388701794 + 0.0002804519 \cdot \text{Elevation}.  
+$$
