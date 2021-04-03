@@ -9,8 +9,6 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F, cache = T)
 ```
 
-\textcolor{red}{Gå skikkelig gjennom LF senere!}
-
 # Problem 1 \hspace{3mm} Inference about a new observation in multiple linear regression
 
 ## a)
@@ -107,11 +105,11 @@ This, combined with the rest of the expression for the confidence interval from 
 
 ## a)
 
-* t-value for intercept is missing: This is calculated by the test statistic $\hat{\beta}_{\text{intercept}}/\hat{SE}^2 \approx 16.15942/0.04140 \approx$ `r round(16.15942/0.04140, digits = 4)`. This is the test statistic for testing $H_0: \hat{\beta}_{\text{intercept}} = 0$ vs. $H_1: \hat{\beta}_{\text{intercept}} \neq 0$. 
+* t-value for intercept is missing: This is calculated by the test statistic $\hat{\beta}_{\text{intercept}}/\hat{SE} \approx 16.15942/0.04140 \approx$ `r round(16.15942/0.04140, digits = 4)`. This is the test statistic for testing $H_0: \hat{\beta}_{\text{intercept}} = 0$ vs. $H_1: \hat{\beta}_{\text{intercept}} \neq 0$. 
 
-* Std. Error for D:T is missing: This can be calculated from the same test statistic as in the last bullet point, since we know the t-value for D:T. Hence, $\hat{\beta}_{\text{D:T}}/\hat{SE} = t$ gives $\hat{SE} = \hat{\beta}_{\text{D:T}}/t \approx -0.00242/-0.058 \approx$ `r round(0.00242/0.058, digits = 4)`.
+* Std. Error for D:T is missing: This can be calculated from the same test statistic as in the last bullet point, since we know the t-value for D:T. Hence, $\hat{\beta}_{\text{D:T}}/\hat{SE} = t$ gives $\hat{SE} = \hat{\beta}_{\text{D:T}}/t \approx -0.00242/-0.058 \approx$ `r round(0.00242/0.058, digits = 4)`. This is the estimated standard deviation of the estimation of the coefficient for D:T. Another way of calculating this value is by noting the design of the experiment. This is a two-level full factorial design, which is a case where we know that $\hat{\boldsymbol{\beta}} \sim N(\boldsymbol{\beta}, \sigma^2/n)$, which means that the estimated std. error for D:T can be found by `Residual standard error` divided by $\sqrt{32}$. 
 
-* p-value for D:F:T is missing: This can be calculated as $2P(T \geq t) =$ `2*pt(2.198, 24, lower.tail = F)` $\approx$ `r 2*pt(2.198, 24, lower.tail = F)`. 
+* p-value for D:F:T is missing: This can be calculated as $2P(T \geq t) =$ `2*pt(2.198, 24, lower.tail = F)` $\approx$ `r 2*pt(2.198, 24, lower.tail = F)`. This is, loosely speaking, the probability that the t-statistic is as observed or more extreme. It is used to test $H_0: \hat{\beta}_{\text{D:F:T}} = 0$ vs. $H_1: \hat{\beta}_{\text{D:F:T}} \neq 0$. 
 
 * Multiple R-squared is missing: This can be calculated as $1 - \frac{\text{SSE}}{\text{SST}}$. $\text{SSE}$ can be calculated from the formula $(n-p)\hat{\sigma}^2 = (32-8)\hat{\sigma}^2 = 24\hat{\sigma}^2 \approx$ `r 24*0.2342^2`, where $\hat{\sigma}$ is found as `Residual Standard Error` in the summary-table. We also know the F-statistic, which is calculated as $\frac{\text{SSR}/(p-1)}{\text{SSE}/(n-p)} = \frac{(\text{SST}-\text{SSE})/(p-1)}{\text{SSE}/(n-p)} = \frac{(\text{SST}-\text{SSE})/(8-1)}{\text{SSE}/(32-8)} = \frac{(\text{SST}-\text{SSE})/7}{\text{SSE}/24} \approx 105.6$, which gives that $\text{SST} \approx$ `r (105.6*24*0.2342^2)*7/24 + 24*0.2342^2`. Finally, this gives $R^2 \approx$ `r 1-(24*0.2342^2)/((105.6*24*0.2342^2)*7/24 + 24*0.2342^2)`. 
 
