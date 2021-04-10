@@ -1,0 +1,111 @@
+---
+title: "Recommended Exercise 9-10 in Statistical Linear Models, Spring 2021"
+author: "alexaoh"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F, cache = T)
+```
+
+
+# Problem 1 \hspace{3mm} Exam 2015 Spring, Problem 2
+
+## a)
+
+The estimator for the parameters are given as $\hat{\boldsymbol{\beta}} = (X^TX)^{-1}X^T\boldsymbol{Y}$. When the columns of X are orthogonal, it means that $X^TX = CI$, where $C$ is some constant depending on the values in $X$. Hence, $(X^TX)^{-1} = \frac{1}{C}I$ and $\hat{\boldsymbol{\beta}} = \frac{1}{C}X^T\boldsymbol{Y}$. This means that a component of the parameter vector has the value $\hat{\beta}_j = \frac{1}{C}\sum_{i = 0}^nx_{ij}y_j = \frac{1}{\boldsymbol{x}_j^T\boldsymbol{x}_j}\boldsymbol{x}_j^T\boldsymbol{Y}$. Hence, the $j^{\text{th}}$ entry of $\hat{\boldsymbol{\beta}}$ only depends on the $j^{\text{th}}$ column of X and $\boldsymbol{Y}$. 
+
+## b)
+
+We are given the data 
+
+```{r}
+A <- c(-1, 1, -1, 1)
+B <- c(-1, -1, 1, 1)
+y <- c(6, 4, 10, 7)
+df <- data.frame("A" = A, "B" = B, "y" = y)
+df
+```
+
+
+The interaction effect of the two factors can be calculated by 
+
+$$
+\begin{split}
+&\frac12(\text{main effect of A when B is 1}) - \frac12(\text{main effect of A when B is -1}) \\
+&= \frac12\left(\frac{7-10}{2}\right) - \frac12\left(\frac{4-6}{2}\right) = \frac14\left(7+6-10-4\right) \\ 
+&= -\frac14 = \frac14(1 \hspace{2mm} -1 \hspace{3mm} -1 \hspace{4mm} 1)^Ty = \text{interaction vector} \times y. 
+\end{split}
+$$
+# Problem 2 \hspace{3mm} Factorial experiments
+
+## a)
+
+```{r, fig.height=3}
+library(FrF2)
+y <- c(14.6, 24.8, 12.3, 20.1, 13.8, 22.3, 12.0, 20.0, 16.3, 23.7, 13.5, 19.4, 11.3, 23.6, 11.2, 21.8)
+plan <- FrF2(nruns=16,nfactors=4,randomize=FALSE)
+plan <- add.response(plan,y)
+
+full.fit <- lm(y~.^4, data = plan)
+summary(full.fit)
+effects <- full.fit$coefficients*2
+effects
+
+DanielPlot(full.fit)
+MEPlot(full.fit)
+IAPlot(full.fit)
+```
+## b)
+
+The regression model that corresponds to this analysis is 
+
+$$
+\begin{split}
+Y &= \beta_0 + \beta_{A}A + \beta_{B}B + \beta_{C}C + \beta_{D}D \\
+&+ \beta_{AB}AB + \beta_{AC}AC + \beta_{AD}AD + \beta_{BC}BC + \beta_{BD}BD + \beta_{CD}CD \\
+&+ \beta_{ABC}ABC + \beta_{ABD}ABD + \beta_{BCD}BCD + \beta_{ACD}ACD + \beta_{ABCD}ABCD + \epsilon, 
+\end{split}
+$$
+where $A, B, C, D \in \{-1, 1\}$. 
+
+## c)
+
+There are no standard deviation estimates in the output above, since we have $2^4 = 16 = p$ and the model is perfectly fit to the data. 
+
+Assume $\sigma^2 = 4$. We know that $\hat{\boldsymbol{\beta}} \sim N(\boldsymbol{\beta}, \frac{\sigma^2}{16}I)$ in two-level factorial designs. Thus, we have the following confidence interval for an element $\hat{\beta}_J$
+
+$$
+\begin{split}
+1-\alpha &= P\left(-z_{\alpha/2} < \frac{\hat{\beta}_j - \beta_i}{\sigma/4} < z_{\alpha/2}\right)\\
+&= P\left(\hat{\beta}_j-\frac{\sigma}{4}z_{\alpha/2} < \beta_i < \hat{\beta}_j+\frac{\sigma}{4}z_{\alpha/2}\right)
+\end{split}
+$$
+
+Calculated in R, the 95 % confidence interval for each of the effects (twice the coefficients) are
+
+```{r}
+cbind(2*full.fit$coefficients-qnorm(0.025, lower.tail = F), 2*full.fit$coefficients+qnorm(0.025, lower.tail = F))
+```
+
+From the output, it becomes apparent that the main effects for $A$ and $B$ are the only effects that are significantly different from 0, since 0 is not in their confidence intervals. 
+
+## d)
+
+When assuming that all three-way and four-way interactions are zero, the variance $\sigma^2$ can be estimated by excluding these higher order interactions using the estimate $\hat{\sigma}^2 = \frac{\text{SSE}_{\text{red}}}{2^k-m-1}$, where $\text{SSE}_{\text{red}}$ is the SSE in the reduced model and $m$ are the columns in the design matrix that are kept in the reduced model. Note that $\text{SSE}_{\text{red}}$ can be calculated by the formula $\text{SSE}_{\text{red}} = 2^k\sum_{j = m+1}^{2^k-1} \hat{\beta}_j^2$, i.e. a constant times the sum of the squares of the removed parameter estimates. This means that the variance of the effect estimators can be estimated by $\widehat{\text{Var}(2\hat{\beta}_j)} = \frac{\hat{\sigma}^2}{2^k} = \frac{1}{2^k-m-1}\sum_{j = m+1}^{2^k-1} \hat{\beta}_j^2$, i.e. the average of the square of the removed coefficient parameters. The significant effects can be found via a t-test with the test statistic $\frac{\hat{\beta}_j}{\hat{\sigma}/2^{k/2}} \sim t_{2^k-m-1}$. 
+
+```{r}
+reduced.fit <- lm(y~.^2, data = plan)
+summary(reduced.fit)
+```
+
+The output gives that an estimate of $\sigma^2$ is $1.303^2 \approx 1.70$. \textcolor{red}{how can you the estimate the variance of the error and the variance of the effect estimators??}
+
+## e)
+
+## f)
+
+# Problem 3 \hspace{3mm} Process development - from Exam TMA4255 2012 Summer
+
+
