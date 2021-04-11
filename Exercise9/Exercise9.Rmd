@@ -93,19 +93,113 @@ From the output, it becomes apparent that the main effects for $A$ and $B$ are t
 
 ## d)
 
-When assuming that all three-way and four-way interactions are zero, the variance $\sigma^2$ can be estimated by excluding these higher order interactions using the estimate $\hat{\sigma}^2 = \frac{\text{SSE}_{\text{red}}}{2^k-m-1}$, where $\text{SSE}_{\text{red}}$ is the SSE in the reduced model and $m$ are the columns in the design matrix that are kept in the reduced model. Note that $\text{SSE}_{\text{red}}$ can be calculated by the formula $\text{SSE}_{\text{red}} = 2^k\sum_{j = m+1}^{2^k-1} \hat{\beta}_j^2$, i.e. a constant times the sum of the squares of the removed parameter estimates. This means that the variance of the effect estimators can be estimated by $\widehat{\text{Var}(2\hat{\beta}_j)} = \frac{\hat{\sigma}^2}{2^k} = \frac{1}{2^k-m-1}\sum_{j = m+1}^{2^k-1} \hat{\beta}_j^2$, i.e. the average of the square of the removed coefficient parameters. The significant effects can be found via a t-test with the test statistic $\frac{\hat{\beta}_j}{\hat{\sigma}/2^{k/2}} \sim t_{2^k-m-1}$. 
+When assuming that all three-way and four-way interactions are zero, the variance $\sigma^2$ can be estimated by excluding these higher order interactions using the estimate $\hat{\sigma}^2 = \frac{\text{SSE}_{\text{red}}}{2^k-m-1}$, where $\text{SSE}_{\text{red}}$ is the SSE in the reduced model and $m$ are the columns in the design matrix that are kept in the reduced model. Note that $\text{SSE}_{\text{red}}$ can be calculated by the formula $\text{SSE}_{\text{red}} = 2^k\sum_{j = m+1}^{2^k-1} \hat{\beta}_j^2$, i.e. a constant times the sum of the squares of the removed parameter estimates. This means that the variance of the effect estimators can be estimated by $\widehat{\text{Var}(\hat{\beta}_j)} = \frac{\hat{\sigma}^2}{2^k} = \frac{1}{2^k-m-1}\sum_{j = m+1}^{2^k-1} \hat{\beta}_j^2$, i.e. the average of the square of the removed coefficient parameters. The significant effects can be found via a t-test with the test statistic $\frac{\hat{\beta}_j}{\hat{\sigma}/2^{k/2}} \sim t_{2^k-m-1}$. 
 
 ```{r}
 reduced.fit <- lm(y~.^2, data = plan)
 summary(reduced.fit)
 ```
 
-The output gives that an estimate of $\sigma^2$ is $1.303^2 \approx 1.70$. \textcolor{red}{how can you the estimate the variance of the error and the variance of the effect estimators??}
+The output gives that an estimate of $\sigma^2$ is $1.303^2 \approx 1.70$. The estimate of the variance of the coefficients is hence $\frac{\hat{\sigma}^2}{16} \approx \frac{1.70}{16} \approx 0.106$. This means that the estimate of the variance of the effects is $\approx 4\cdot0.106 \approx 0.425$. These values can also be approximated by the formulas written above, as seen in the R output below. 
+
+```{r}
+sdbetahatest<-sqrt(summary(reduced.fit)$sigma^2/16)# st. errors shown in summary table.
+sdbetahatest
+# Three different ways to estimate SSE. 
+sse <- sum((y-reduced.fit$fitted.values)^2)
+sse
+summary(reduced.fit)$sigma^2*(16-11) # the same
+
+# this function of removed covariates of full model is equal to sse of reduced model
+16*sum(full.fit$coeff[12:16]^2) 
+
+
+# Estimate of sigma^2, same as found above. 
+sigma.sq <- sse/(16-11)
+sigma.sq
+
+# Estimate of variance of effects. 
+4*sigma.sq/16
+4/(16-11)*sum(full.fit$coefficients[12:16]^2)
+```
 
 ## e)
 
+```{r}
+design1 <- FrF2(16, 4, blocks=2, randomize=FALSE)
+summary(design1)
+```
+
+ABCD is the only effect confounded with the block effect.
+
 ## f)
+
+```{r}
+design2 <- FrF2(16, 4, blocks=4, alias.block.2fis=TRUE, randomize=FALSE)
+summary(design2)
+```
+
+
+Covariates 13 ($ACD$) and 14 ($BCD$) are proposed as block generators. This means that both these effects are confounded with the blocks, in addition to the effect $ACD \cdot BCD = AB$.  
 
 # Problem 3 \hspace{3mm} Process development - from Exam TMA4255 2012 Summer
 
+## a)
 
+The effect estimate for factor $B$ is $\frac{633+642 + 1075 + 729}{4} - \frac{550+669+1037+749}{4} = 18.5$. The main effects plot was drawn by hand. The estimated main effect of $B$ is interpreted as the expected increase in the etch rate when the flow of gas increases from 125 to 200. This increase in etch rate corresponds to $18.5$. 
+
+```{r, echo = F, eval = F}
+# This plan is different from the one in the task!
+plan <- FrF2(8, 3)
+y <- c(550, 669, 633, 642, 1037, 749, 1075, 729)
+plan <- add.response(plan, y)
+fit <- lm(y~.^3, data = plan)
+MEPlot(fit)
+```
+
+## b)
+
+The "Std. Error" gives the estimated standard deviation of each of the regression coefficients. These are the same for all covariates, since the design matrix is orthogonal, which means that $(X^TX)^{-1}$ is diagonal. More precisely, all estimated standard deviations are $\hat{\sigma}/\sqrt{n}$. Since the residual standard error is $47.46$, the estimated standard deviation of each of the coefficients is $47.46/\sqrt{16} = 11.865$, which matches the output. 
+
+The estimated effect for $B$ is twice the estimated coefficient for $B$. The missing number for the $t$-statistic is $\frac{\hat{B}}{\hat{\sigma}/2^{k/2}} = \frac{\hat{B}}{\text{Std. Error}} = \frac{3.688}{11.865} = 0.3108$. The hypotheses underlying the $p$-value are $H_0: B = 0$ vs. $H_1: B \neq 0$. The conclusion is that there is not enough evidence to conclude that $B neq 0$, hence $H_0$ is kept. The significant covariates are $A, B$ and $AC$, at significance level 0.05. 
+
+## c)
+The estimated coefficients for $A, B$ and $AC$ are the same in both the models since the coefficient estimates only depend on the response and each respective column in the design matrix. The standard errors have changed, since the $SSE$ changes when the amount of covariates used changes. 
+
+Based on the estimates, I would suggest that $A$ and $AC$ should be low and $C$ should be high, in order to yield the largest etch rate. However, this is not possible, since $AC$ is negative when the signs of $A$ and $C$ are different. Hence, the optimal values are $A$ low, $C$ high, and, thus, $AC$ low. 
+
+Have a look at the solution for a 95% prediction interval based on the chosen levels of $A$ and $C$. The expression for the prediction interval is the same as always. We use the vector $\boldsymbol{x}_0^T = (1 \quad -1 \quad 1 \quad -1)$, since we have an intercept, $A$ low, $C$ high and $AC$ low, as the new predictor. 
+
+## d)
+
+This is a fractional factorial design. More specifically, a half fraction of a $2^3$ experiment, i.e. a $2^{3-1}$ experiment. 
+
+The generator for the experiment is $C = -AB$. 
+
+The defining relation for the experiment is $I = -ABC$, since these are the only rows in the original plan that are performed. This can also be seen from the above noted generator, by multiplying both sides by $C$. 
+
+The alias structure of the experiment is found by multiplying the effects by the defining relation. This gives the aliases $A = -BC$, $B = -AC$ and $C = -AB$. 
+
+The resolution of the experiment is III, since the defining relation has three letters. 
+
+# Problem 4 \hspace{3mm} Blocking
+
+No software is used. 
+
+This experiment can be blocked as explained in the following. Choose the block factors $BC, BD$ and $DE$. Then the block factors are confunded with these three effects and $BC \cdot BD \cdot DE = CE$, $BC \cdot BD = CD$, $BC \cdot DE = BCDE$ and $BD \cdot DE = BE$. Hence, the main effect $A$ and all two-factor interactions involving $A$ are not confunded with the block factors. 
+
+# Problem 5 \hspace{3mm} Fractional factorial design
+
+No software is used. 
+
+## a)
+
+The generator for the design is $D = ABC \implies I = ABCD$ is the defining relation. Hence, the resolution is IV. 
+
+## b) 
+
+After calculating all the aliases, the resolution is seen to be IV. 
+
+## c)
+
+\textcolor{red}{Denne skjønner jeg ikke :( Hvordan finner jeg defining relation her?}
