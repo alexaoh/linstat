@@ -1,0 +1,54 @@
+---
+title: "Compulsory Exercise 3 in TMA4267 Statistical Linear Models, Spring 2021"
+author: "Sander Ruud, Alexander J Ohrt"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", warning = FALSE, message=FALSE)
+```
+
+# Design of Experiments (DOE)
+
+The purpose of this exercise is to provide insight and training in planning, performing and analyzing a statistical experiment, as well as to report the results. 
+
+## High-score in Tetris
+
+A $k$-factor two-level experiment is performed in order to determine how various factors influence score in the game of *Tetris*. The aim of the game is to attain the highest score possible. This is inherently interesting, because performance is important in life (lol). Our prior knowledge when it comes to factors that influence performance in the game is that concentration is key, as in many other situations in life. Besides this, in-game performance has never been investigated systematically by us, which makes this experiment more interesting, at least for the authors of the study. Hopefully, we can achieve higher high-scores and better performances in Tetris, after uncovering some factors that might boost these positive outcomes. 
+
+## Selection of Factors and Levels
+
+Some factors that are believed to be relevant to the problem are
+
+* A - Screen brightness: 50% or 100%. 
+* B - Surroundings: Is the game played in a quiet room or in front of the TV?
+* C - Seating: Is the game played while laying in bed or while sitting comfortably at a desk?
+* D - Nutrition: Is the game played while starved or while satiated?
+* E - Sleep: Is the game played after a good night sleep or are you very tired?
+* F - Device: Is the game played on a mobile phone or on a laptop with a larger screen?
+
+We expect an interaction between seating and device, since the mobile phone might be a lot easier to handle while laying in bed compared to the laptop, which might give more confidence when seated at a desk. Moreover, an interaction between nutrition, sleep and surroundings might be present, since both the former might influence loss or gain of concentration in the latter situation. Also, an interaction between screen brightness and device might be reasonable, since a larger screen might not demand a bright screen compared to the smaller screen. More interactions might be present, but those are the ones I thought of off the top of my head. 
+
+The levels that should be used are brief ly described in the list above. These are reasonable since they may lead to very different results in the response and they are easy to implement and monitor in practice. These levels can be controlled by simply testing for each of them \textcolor{red}{(lol, må skrive noe mer fornuftig her)}
+
+## Selection of Response Variable
+
+The response is the high-score in the game \textcolor{red}{Dersom det er noe annet som er bedre å bruke i Tetris, så kom med det ;) Ikke sikker på om det er noe som heter high score engang lol. } Several response variables might be interesting, e.g. a mean score over several games with the same levels of the factors. These types of responses are very easy to measure, since Tetris simply outputs the score after each completed round. When it comes to the accuracy of these responses, it is reasonable to assume that the algorithm for calculating the score is the same in each game, which means that they should be reliable, as long the game does not update while playing \textcolor{red}{Dette er også litt BS, men vanskelig SPM å svare på.}
+
+## Choice of Design
+
+This experiment will be follow $2^{6-2}$ fractional factorial design. Some of the reasoning behind this is that testing all the combinations of a full $2^6$ factorial design would take quite some time to perform. The defining relation is ... \textcolor{red}{Fornuftig?}
+
+Desired resolution? As large as possible?
+Blocking? --> This should not be necessary IMO, since these experiments should be very quick and easy to perform. 
+Replications? --> Perhaps. 
+
+## Implementation of the Experiment
+
+
+
+## Analysis of Data
+
+## Conclusion and Recommendations
