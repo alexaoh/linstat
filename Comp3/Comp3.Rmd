@@ -22,20 +22,24 @@ A $k$-factor two-level experiment is performed in order to determine how various
 
 Some factors that are believed to be relevant to the problem are
 
-* A - Screen brightness: 50% or 100%. 
-* B - Surroundings: Is the game played in a quiet room or in front of the TV?
-* C - Seating: Is the game played while laying in bed or while sitting comfortably at a desk?
-* D - Nutrition: Is the game played while starved or while satiated?
-* E - Sleep: Is the game played after a good night sleep or are you very tired?
+colnames(ExperimentDesign) <- c("Bright", "Coffee", "Music", "Seating", "Surroundings", "Device")
+
+* A - Screen brightness: 10% or 100%. 
+* B - Coffee break: Is the game played while drinking coffee at least once during the game?
+* C - Music: Is the game played with or without listening to Darude Sandstorm?
+* D - Seating: Is the game played while laying in bed or while sitting comfortably at a desk?
+* E - Surroundings: Is the game played in a quiet room or in front of the TV?
 * F - Device: Is the game played on a mobile phone or on a laptop with a larger screen?
 
-We expect an interaction between seating and device, since the mobile phone might be a lot easier to handle while laying in bed compared to the laptop, which might give more confidence when seated at a desk. Moreover, an interaction between nutrition, sleep and surroundings might be present, since both the former might influence loss or gain of concentration in the latter situation. Also, an interaction between screen brightness and device might be reasonable, since a larger screen might not demand a bright screen compared to the smaller screen. More interactions might be present, but those are the ones I thought of off the top of my head. 
 
-The levels that should be used are brief ly described in the list above. These are reasonable since they may lead to very different results in the response and they are easy to implement and monitor in practice. These levels can be controlled by simply testing for each of them \textcolor{red}{(lol, må skrive noe mer fornuftig her)}
+
+We expect an interaction between seating and device, since the mobile phone might be a lot easier to handle while laying in bed compared to the laptop, which might give more confidence when seated at a desk. Moreover, an interaction between low screen brightness and noise could make it even more difficult to concentrate. Also, an interaction between screen brightness and device might be reasonable, since a larger screen might not demand a bright screen compared to the smaller screen. More interactions might be present, but those are the ones I thought of off the top of my head. 
+
+The levels that should be used are brief ly described in the list above. These are reasonable since they may lead to very different results in the response and they are easy to implement and monitor in practice. These levels can be controlled by simply testing for each of them systematically.
 
 ## Selection of Response Variable
 
-The response is the high-score in the game \textcolor{red}{Dersom det er noe annet som er bedre å bruke i Tetris, så kom med det ;) Ikke sikker på om det er noe som heter high score engang lol. } Several response variables might be interesting, e.g. a mean score over several games with the same levels of the factors. These types of responses are very easy to measure, since Tetris simply outputs the score after each completed round. When it comes to the accuracy of these responses, it is reasonable to assume that the algorithm for calculating the score is the same in each game, which means that they should be reliable, as long the game does not update while playing \textcolor{red}{Dette er også litt BS, men vanskelig SPM å svare på.}
+The response is the score in the game after 30 seconds. Each game is played using the same setup and controls. Several response variables might be interesting, e.g. a mean score over several games with the same levels of the factors. These types of responses are very easy to measure, since Tetris simply outputs the score after each completed round. When it comes to the accuracy of these responses, it is reasonable to assume that the algorithm for calculating the score is the same in each game, which means that they should be reliable. As the pieces received are random each time, we will expect a random element, that is, there will be a lot of variance.
 
 ## Choice of Design
 
@@ -47,8 +51,51 @@ Replications? --> Perhaps.
 
 ## Implementation of the Experiment
 
-
+We create a game mode that lasts for 30 seconds. For each combination of variables, we play one single game, and the game outputs a score.
 
 ## Analysis of Data
 
+````{r}
+# importing packages
+# require(FrF2)
+````
+
+```{r}
+
+results = c(7863,6977,6597,8982,5056,4352,7814,5472,6450,4031,4915,5365,3213,4540,7917,4842,6968,6717,7192,6767,5821,6387,064,4742,5246,3150,5463,7588,6430,3573,5867,4608,1564,728,1574,362,1673,3063,2816,1500,2845,496,2184,911,1241,3107,1657,1803,2552,2358,2218,2527,1460,403,1714,3391,2006,1789,4118,577,2018,658,4528,662)
+
+
+
+results
+
+length(results)
+?gl
+
+ExperimentDesign <- expand.grid(A = gl(2, 1, labels = c("+", "-")),
+                           B = gl(2, 1, labels = c("+", "-")),
+                           C = gl(2, 1, labels = c("+", "-")),
+                           D = gl(2, 1, labels = c("+", "-")),
+                           E = gl(2, 1, labels = c("+", "-")),
+                           FF = gl(2, 1, labels = c("+", "-"))) # FALSE IS RESERVED
+
+
+# colnames(ExperimentDesign) <- c("Bright", "Coffee", "Music", "Seating", "Surroundings", "Device")
+
+
+#View(ExperimentDesign)
+ExperimentDesign
+
+#print(FrF2(nruns=2^4,nfactors=4, randomize=FALSE))
+# må sette default.levels = c(1, -1)
+
+#plan = FrF2(nruns = 2^6, nfactors=6, randomize=FALSE)
+#plan <- add.response(plan, results)
+
+attach(ExperimentDesign)
+summary(lm(results~(A+B+C+D+E+FF)^2), data=ExperimentDesign)
+```
+
 ## Conclusion and Recommendations
+
+In the full factorial model, the only two significant factors are the intercept, and the device.
+When playing on mobile, the expected score decreases with about $5000$ points, with a p-value of $9e-7$, which is not insignificant.
