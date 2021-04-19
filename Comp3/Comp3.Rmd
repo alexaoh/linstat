@@ -47,10 +47,6 @@ This experiment will follow a $2^{6}$ full factorial design. In this way, all th
 
 Blocking is not necessary, since the experiment is performed by one person, in a relatively short time frame of approximately one hour. 
 
-Desired resolution? \textcolor{red}{Snakker man om resolution i et fullfaktorielt design, slik vi har gjort her?}
-\textcolor{blue}{Nei, det tror jeg ikke.}
-
-
 ## Implementation of the Experiment
 
 We create a game mode that lasts for 30 seconds. For each combination of levels of the factors, one single game is played, and the game outputs a score. These scores are registered and added to the `results`-vector below. 
@@ -94,7 +90,7 @@ ExperimentDesign <- expand.grid(A = gl(2, 1, labels = c("+", "-")),
 ExperimentDesign
 
 #print(FrF2(nruns=2^4,nfactors=4, randomize=FALSE))
-# må sette default.levels = c(1, -1)
+# Must set default.levels = c(1, -1)
 
 #plan = FrF2(nruns = 2^6, nfactors=6, randomize=FALSE)
 #plan <- add.response(plan, results)
@@ -105,7 +101,7 @@ summary(fit)
 
 # Check of model assumptions.
 par(mfrow=c(2,2))
-plot(fit) # Finnes vel nicere måte å plotte på sikkert, men har det ikke i hodet akk nå. 
+plot(fit) 
 ```
 
 From the residual plot in the top left, the residuals do not seem to break the assumption of homoscedasticity, since no clear pattern is observed. Moreover, the Q-Q-plot does not signal that the model assumptions are not fulfilled either. 
