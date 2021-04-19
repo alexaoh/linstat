@@ -48,6 +48,8 @@ This experiment will follow a $2^{6}$ full factorial design. In this way, all th
 Blocking is not necessary, since the experiment is performed by one person, in a relatively short time frame of approximately one hour. 
 
 Desired resolution? \textcolor{red}{Snakker man om resolution i et fullfaktorielt design, slik vi har gjort her?}
+\textcolor{blue}{Nei, det tror jeg ikke.}
+
 
 ## Implementation of the Experiment
 
@@ -55,7 +57,7 @@ We create a game mode that lasts for 30 seconds. For each combination of levels 
 
 Note that the results are presented in an orderly fashion below, since they were performed in an orderly fashion. This is a problem with the implementation of this experiment, since randomization is not used. This could have been fixed simply by sampling rows randomly via R from the dataframe `ExperimentDesign`, which is shown in the following. However, this would make it harder to log which combinations of levels have been performed at each time during the experiment, which leads to larger time consumption.
 
-Since the experiment is very simple to perform, each experiment is a genuine run replicate, which means that it reflects the total variability of the experiment. All the same necessary steps are performed for each of the $2^6$ runs, i.e. ... \textcolor{red}{Stemmer dette? Kan man f.eks si at det ikke er genuine run replicate, fordi du er mer sliten mot slutten av alle forsøkene enn mot starten? Burde man f.eks tatt 5 min pause etter hvert spill, for å endre på dette? Kanskje du har noen tanker og vil fullføre dette? Nå prøver jeg bare å nevne noe for alle keywordsene på BB, slik at vi kommer inn på alt der ;) Så regner jeg med at det blir godkjent.}
+Since the experiment is very simple to perform, each experiment is a genuine run replicate, which means that it reflects the total variability of the experiment. All the same necessary steps are performed for each of the $2^6$ runs, i.e.... \textcolor{red}{Stemmer dette? Kan man f.eks si at det ikke er genuine run replicate, fordi du er mer sliten mot slutten av alle forsøkene enn mot starten? Burde man f.eks tatt 5 min pause etter hvert spill, for å endre på dette? Kanskje du har noen tanker og vil fullføre dette? Nå prøver jeg bare å nevne noe for alle keywordsene på BB, slik at vi kommer inn på alt der ;) Så regner jeg med at det blir godkjent.} \textcolor{blue}{Enig godt poeng!}. It is however possible, that we should have had a larger break between each game. For example if we had taken a 5 minute pause after each game, then we could avoid tiredness. As the game duration was so low, the coffee breaks probably just added a time penalty, and the real benefit from coffee could probably came after the run, not in the current run. Furthermore, although coffee can help with concentration, excessive amounts within few hours could reach the point of diminishing returns.
 
 ## Analysis of Data
 
@@ -112,3 +114,4 @@ From the residual plot in the top left, the residuals do not seem to break the a
 
 In the full factorial model, the only two significant factors are the intercept, and the device.
 When playing on mobile, the expected score decreases with about $5000$ points, with a p-value of $\approx 9e-7$, which is not insignificant.
+The interaction effects we expected did not seem as significant as we thought.
