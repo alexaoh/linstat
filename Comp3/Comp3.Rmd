@@ -22,8 +22,6 @@ A $k$-factor two-level experiment is performed in order to determine how various
 
 Some factors that are believed to be relevant to the problem are
 
-colnames(ExperimentDesign) <- c("Bright", "Coffee", "Music", "Seating", "Surroundings", "Device")
-
 * A - Screen brightness: 10% or 100%. 
 * B - Coffee break: Is the game played while drinking coffee at least once during the game?
 * C - Music: Is the game played with or without listening to Darude Sandstorm?
@@ -53,7 +51,7 @@ We create a game mode that lasts for 30 seconds. For each combination of levels 
 
 Note that the results are presented in an orderly fashion below, since they were performed in an orderly fashion. This is a problem with the implementation of this experiment, since randomization is not used. This could have been fixed simply by sampling rows randomly via R from the dataframe `ExperimentDesign`, which is shown in the following. However, this would make it harder to log which combinations of levels have been performed at each time during the experiment, which leads to larger time consumption.
 
-Since the experiment is very simple to perform, each experiment is a genuine run replicate, which means that it reflects the total variability of the experiment. All the same necessary steps are performed for each of the $2^6$ runs, i.e.... \textcolor{red}{Stemmer dette? Kan man f.eks si at det ikke er genuine run replicate, fordi du er mer sliten mot slutten av alle forsøkene enn mot starten? Burde man f.eks tatt 5 min pause etter hvert spill, for å endre på dette? Kanskje du har noen tanker og vil fullføre dette? Nå prøver jeg bare å nevne noe for alle keywordsene på BB, slik at vi kommer inn på alt der ;) Så regner jeg med at det blir godkjent.} \textcolor{blue}{Enig godt poeng!}. It is however possible, that we should have had a larger break between each game. For example if we had taken a 5 minute pause after each game, then we could avoid tiredness. As the game duration was so low, the coffee breaks probably just added a time penalty, and the real benefit from coffee could probably came after the run, not in the current run. Furthermore, although coffee can help with concentration, excessive amounts within few hours could reach the point of diminishing returns.
+Since the experiment is very simple to perform, each experiment is a genuine run replicate, which means that it reflects the total variability of the experiment. All the same necessary steps are performed for each of the $2^6$ runs, all trials were done independently. However, there are several reasons to believe the experiment does not reflect all the variability. For instance, it is possible, that we should have had a larger break between each game. If we had taken a 5 minute pause after each game, then we could avoid tiredness. Because the game duration was so short, the coffee breaks probably just added a time penalty, and the real benefit from coffee could probably came after the run, not in the current run. Furthermore, although coffee can help with concentration, excessive amounts within few hours could reach the point of diminishing returns. The points that are scored are also based on skill, which would increase over time. Especially when playing on mobile, we had almost no experience prior to the experiment, and it is not unlikely that the score could increase over time. All these factors leads us to believe that each run may not be a genuine run replicate.
 
 ## Analysis of Data
 
