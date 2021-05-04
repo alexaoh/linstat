@@ -1,0 +1,110 @@
+---
+title: "Recommended Exercise 8 in Statistical Linear Models, Spring 2021"
+author: "alexaoh"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, warning = F, cache = T)
+```
+
+
+# Problem 1 \hspace{3mm} One- and two-way ANOVA - and the linear model
+
+## a)
+```{r}
+income <- c(300, 350, 370, 360, 400, 370, 420, 390,400, 430, 420, 410, 300, 320, 310, 305,350, 370, 340, 355, 370, 380, 360, 365)
+gender <- c(rep("Male", 12), rep("Female",12))
+place <- rep(c(rep("A",4), rep("B",4), rep("C",4)),2)
+data <- data.frame(income, gender, place)
+data
+
+pairs(data)
+plot(income~place, data=data)
+plot(income~gender, data=data)
+interaction.plot(data$gender, data$place, data$income)
+plot.design(income~place+gender, data=data)
+```
+
+## b)
+
+```{r}
+X <- cbind(rep(1,length(data$income)), data$place=="A", data$place=="B",data$place=="C")
+XTX <- t(X) %*% X
+qr(XTX)$rank
+```
+
+The rank of $X^TX$ is 3. We need it to have full rank in order to be able to estimate the coefficients in the model. Problems with non-full rank can be solved by different encodings of the coefficients, e.g. dummy coding, which is standard in R. 
+
+## c)
+
+```{r}
+model <- lm(income~place-1, data=data, x = T)
+summary(model)
+anova(model)
+```
+
+The intercept is removed, which gives the parametrization in this case. This means that each coefficient estimate includes the mean, i.e. the model has no mean (it is set to zero). The null hypothesis tested in `anova` is $\alpha_A = \alpha_B = \alpha_c = 0$. The result is that the null hypothesis is discarded, because the p-value is significant, which means that the model has some merit. 
+
+## d)
+
+```{r}
+options(contrasts=c("contr.treatment", "contr.poly"))
+model1 <- lm(income~place, data=data, x=TRUE)
+summary(model1)
+anova(model1)
+
+options(contrasts=c("contr.sum", "contr.poly"))
+model2 <- lm(income~place, data=data, x=TRUE)
+summary(model2)
+anova(model2)
+```
+
+When using `contr.treatment` the regular "dummy coding" is used, i.e. placeA is dropped/merged with the intercept. Thus the coefficient estimate for placeA is found in the intercept, while the estimates for placeB and placeC are found by adding the estimates from the model to the intercept, respectively. In essence, placeA is used as a baseline. 
+
+When using `contr.sum` the "zero-sum" or "effect coding" is used. This means that, in order to retrieve the estimate for placeA, the coefficient called place1 is added to the intercept, while, similarly, the estimate for placeB is retrieved by adding the coefficient called place2 to the intercept. The estimate for placeC can be retrieved by computing the intercept minus the other two coefficients (place1 and place2). 
+
+## e)
+
+```{r}
+# Må finne ut hva C og d skal være!
+```
+
+## f)
+
+```{r}
+options(contrasts=c("contr.treatment", "contr.poly"))
+model3 <- lm(income~place+gender, data=data, x=TRUE)
+anova(model3)
+summary(model3)
+
+options(contrasts=c("contr.sum", "contr.poly"))
+model4 <- lm(income~place+gender, data=data, x=TRUE)
+summary(model4)
+anova(model4)
+
+interaction.model <- lm(income~place*gender, data = data, x = TRUE) 
+
+# Gjør F-test + tolkning av modellene her også!
+```
+
+
+# Problem 2 \hspace{3mm} Teaching reading
+
+## a)
+
+The hypothesis test is 
+
+$$
+H_0: \alpha_A = \alpha_B = \alpha_C = 0 \hspace{2mm} \text{ vs. } \hspace{2mm} H_1: \text{ At least one } \alpha \neq 0.
+$$
+Assumptions needed to make to perform the test are ...
+
+Performing the test gives ...
+
+The conclusion from the test is ...
+
+## b)
+
+The suggested estimator, $\hat{\gamma}$, for $\gamma$ is 
