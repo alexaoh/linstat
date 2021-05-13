@@ -20,7 +20,7 @@ Since $\hat{\boldsymbol{\beta}} = (X^TX)^{-1}X^T\boldsymbol{Y}$, we know that $\
 Generally, we know that if $Z \sim N(0,1)$ and $U \sim \chi^2_q$, where $Z$ and $U$ are independent, then $\frac{Z}{\sqrt{U/q}} \sim t_q$. In this case, we can set $Z = \frac{\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}-\boldsymbol{x}_0^T\boldsymbol{\beta}}{\sqrt{\sigma^2\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0)}}$ and $U = \frac{1}{\sigma^2}\text{SSE} = \frac{(n-p)\hat{\sigma}^2}{\sigma^2} \sim \chi^2_{n-p}$. Moreover, $Z$ and $U$ are independent, because $\hat{\boldsymbol{\beta}}$ and $\hat{\sigma}^2$ are independent. Hence, the estimator 
 
 $$
-  T = \frac{Z}{\sqrt{U/q}} = \frac{\frac{\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}-\boldsymbol{x}_0^T\boldsymbol{\beta}}{\sqrt{\sigma^2\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0)}}}{\sqrt{\frac{(n-p)\hat{\sigma}^2}{\sigma^2}/(n-p)}} = \frac{\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}-\boldsymbol{x}_0^T\boldsymbol{\beta}}{\sqrt{\hat{\sigma}^2\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0)}} \sim t_{n-p}. 
+  T = \frac{Z}{\sqrt{U/q}} = \frac{\frac{\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}-\boldsymbol{x}_0^T\boldsymbol{\beta}}{\sqrt{\sigma^2\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0}}}{\sqrt{\frac{(n-p)\hat{\sigma}^2}{\sigma^2}/(n-p)}} = \frac{\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}-\boldsymbol{x}_0^T\boldsymbol{\beta}}{\sqrt{\hat{\sigma}^2\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0}} \sim t_{n-p}. 
 $$
 
 This means that 
@@ -51,7 +51,7 @@ $$
 1-\alpha = P\left(\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} - t_{\alpha/2}\hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0} \leq Y_0 \leq \boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} + t_{\alpha/2}\hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0} \right),
 $$
 
-which means that $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} \pm  t_{\alpha/2}\hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0}$ is a $100(1-\alpha)\%$ prediction interval for $Y_0$. \textcolor{red}{Why does $Y_0$ independent of $\boldsymbol{\varepsilon}$ give independence from $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}$?}
+which means that $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}} \pm  t_{\alpha/2}\hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T(X^TX)^{-1}\boldsymbol{x}_0}$ is a $100(1-\alpha)\%$ prediction interval for $Y_0$. \textcolor{red}{LF: Why does $Y_0$ independent of $\boldsymbol{\varepsilon}$ give independence from $\boldsymbol{x}_0^T\hat{\boldsymbol{\beta}}$?}
 
 ## d)
 
@@ -128,7 +128,35 @@ since $h_x(x,y) = \frac{\partial}{\partial x}h(x,y) =  \frac{\partial}{\partial 
 
 From Figure 1, we can get the numerical estimates of the moments, given as
 
+$$
+\begin{split}
+\widehat{\text{E}(\hat{\gamma})} &= 2^{\hat{\beta}_F - \hat{\beta}_D} \approx  0.636 \\
+\widehat{\text{Var}(\hat{\gamma})} &=  2^{2(\hat{\beta}_F - \hat{\beta}_D)}(\text{ln}(2))^2(\text{Var}(\hat{\beta}_F)-\text{Var}(\hat{\beta}_D)) \approx 6.67 \cdot 10^{-4}
+\end{split}
+$$
+## c)
 
+A general test is $C\beta = d$. Let
+
+$$
+C = \begin{pmatrix}
+0 & 0 & 0 & 0 & 0 &1 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 &0 & 1 & 0\\
+0 & 0 & 0 & 0 & 0 &0 & 0 & 1\\
+\end{pmatrix}, \hspace{2mm} d = \begin{pmatrix} 0 \\ 0 \\ 0 \end{pmatrix}.
+$$
+
+The test statistic is 
+
+$$
+F = \frac{(C\hat{\beta})^T(C(X^TX)^{-1}C^T)^{-1}C\hat{\beta}}{r\hat{\sigma}^2} = 4.705\sim F_{\text{rank}(C), n-p} = F_{3, 24}.
+$$
+
+The critical values for $F_{3, 24}$ are 3.01 for $\alpha = 0.05$ and 3.72 for $\alpha = 0.025$. Thus, the null hypothesis is rejected at (least) level 0.025.
+
+## d)
+
+The estimated regression coefficients are the same, since the columns in $X$ are orthogonal (each estimate only depends on the response and its respective column in $X$). However, the estimated standard deviation changes because it is estimated from $\text{SSE}$ and $(n-p)$, which are quantities that change when the model changes. A prediction is $\boldsymbol{x_0}^T\hat{\beta} = \begin{pmatrix}1 & 1& 1 & -1 & 1 \end{pmatrix}^T\hat{\beta} \approx 17.82$, with a 95\% prediction interval (calculated via the formula in *c)*) $[17.198, 18.425]$.
 
 # Problem 3 \hspace{3mm} Multiple testing with plant stress
 
@@ -137,11 +165,36 @@ pvalues <- scan("https://www.math.ntnu.no/emner/TMA4267/2018v/damagePvalues.txt"
 m <- length(pvalues)
 ```
 
-
 ## a) 
 
-The family-wise error rate (FWER) is the probability of one or more false positive findings $P(V > 0)$, where $V$ is the number of false positive findings among the $m$ tests. The false discovery rate (FDR) gives the expected proportion of false positive results among the $m$ hypotheses tested. A false positive is the same as a type I error, a case where the null hypothesis is rejected despite it being true. In the case of multiple linear regression this means that it is concluded that there is a linear relationship between the predictors and the response, despite the relationship not existing. 
+The family-wise error rate (FWER) is the probability of one or more false positive findings $P(V > 0)$, where $V$ is the number of false positive findings among the $m$ tests. The false discovery rate (FDR) gives the expected proportion of false positive findings among the rejected hypotheses. A false positive is the same as a type I error, a case where the null hypothesis is rejected despite it being true. In the case of multiple linear regression this means that it is concluded that there is a linear relationship between the predictors and the response, despite the relationship not existing. 
 
 ## b)
 
-Control FWER at level $\alpha = 0.05$ with the Bonferroni method. This gives $\alpha_{\text{loc}} = \frac{0.05}{m} =$ `r 0.05/10000`. In this case one would reject `length(pvalues[pvalues<5e-6])` $=$ `r length(pvalues[pvalues<5e-6])` null-hypotheses in the data. Requirements when using Bonferronis method are 
+Control FWER at level $\alpha = 0.05$ with the Bonferroni method. This gives $\alpha_{\text{loc}} = \frac{0.05}{m} =$ `r 0.05/10000`. In this case one would reject `length(pvalues[pvalues<5e-6])` $=$ `r length(pvalues[pvalues<5e-6])` null-hypotheses in the data. Bonferroni's method can always be used. It is often called conservative because controlling FWER is a very strict criterion, especially when $m$ is large, as is the case here. Moreover, since Bonferroni's method does not account for dependecy structures between the $m$ hypotheses, the $p$-value cut-off might be estimated to a value that is much smaller than necessary, e.g. if the tests (here: genes) are highly correlated, which means that the effective number of tests is smaller than $m$. More elaborate methods take dependencies into account, which might yield more accurate cut-offs. 
+
+## c)
+
+```{r}
+pvaluesb <- ifelse(pvalues<5e-6, "Reject", "Keep")
+type1c <- sum(pvaluesb[1:9000] == "Reject") 
+type2c <- sum(pvaluesb[9001:10000] == "Keep") 
+type1c # V. Hence, U = 9000 - V = 9000
+type2c # T. Hence, S = 1000 - 981 = 19
+# Hence, R = 19, m-R = 9981
+```
+
+Thus, there are zero false positives. In a true multiple hypothesis setting the only known values are $m$ and $R$.  
+
+## d)
+
+```{r}
+pvaluesd <- ifelse(pvalues<0.05, "Reject", "Keep")
+type1d <- sum(pvaluesd[1:9000] == "Reject") 
+type2d <- sum(pvaluesd[9001:10000] == "Keep") 
+type1d # V. Hence, U = 9000 - V = 8572
+type2d # T. Hence, S = 1000 - 178 = 822
+# Hence, R = V + S = 1250, m-R = 8750
+```
+
+Now we have 428 false positives. 
