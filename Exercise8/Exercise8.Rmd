@@ -14,11 +14,12 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, comment = "#>", message = F, war
 
 ## a)
 ```{r}
-income <- c(300, 350, 370, 360, 400, 370, 420, 390,400, 430, 420, 410, 300, 320, 310, 305,350, 370, 340, 355, 370, 380, 360, 365)
+income <- c(300, 350, 370, 360, 400, 370, 420, 
+            390,400, 430, 420, 410, 300, 320, 310, 
+            305,350, 370, 340, 355, 370, 380, 360, 365)
 gender <- c(rep("Male", 12), rep("Female",12))
 place <- rep(c(rep("A",4), rep("B",4), rep("C",4)),2)
 data <- data.frame(income, gender, place)
-data
 
 pairs(data)
 plot(income~place, data=data)
@@ -68,8 +69,31 @@ When using `contr.sum` the "zero-sum" or "effect coding" is used. This means tha
 ## e)
 
 ```{r}
-# Må finne ut hva C og d skal være!
+# Model 1
+r <- 2
+C <- cbind(rep(0,r), diag(r))
+C
+
+d <- matrix(rep(0,r), ncol=1)
+n <- length (data$income)
+
+betahat <- matrix(model1$coefficients, ncol=1)
+sigma2hat <- summary(model1)$sigma^2
+X <- model.matrix(model1)
+F1 <- (t(C%*%betahat-d)%*%solve(C%*%solve(t(X)%*%X)%*%t(C))%*%(C%*%betahat-d))/(r*sigma2hat)
+F1
+1-pf(F1,r,n-length(betahat))
+
+# Model 2
+betahat2 <- matrix(model2$coefficients, ncol=1)
+sigma2hat2 <- summary(model2)$sigma^2
+X2 <- model.matrix(model2)
+F2 <- (t(C%*%betahat2-d)%*%solve(C%*%solve(t(X2)%*%X2)%*%t(C))%*%(C%*%betahat2-d))/(r*sigma2hat2)
+F2
+1-pf(F2,r,n-length(betahat))
 ```
+
+We can see that the test for both models gives the same result!
 
 ## f)
 
@@ -83,28 +107,73 @@ options(contrasts=c("contr.sum", "contr.poly"))
 model4 <- lm(income~place+gender, data=data, x=TRUE)
 summary(model4)
 anova(model4)
-
-interaction.model <- lm(income~place*gender, data = data, x = TRUE) 
-
-# Gjør F-test + tolkning av modellene her også!
 ```
 
+As before, the first model uses the "dummy coding", while the second model uses the "effect coding". Also, the ANOVA-tables look the same for both models, as expected based on the One-way ANOVA from earlier. 
+
+```{r}
+interaction.model <- lm(income~place*gender, data = data, x = TRUE) 
+summary(interaction.model)
+anova(interaction.model)
+
+# Manual F-test on the interaction model
+r <- 2
+C2 <- matrix(c(0,0,0,0,1,0,0,0,0,0,0,1), byrow = T, nrow = 2)
+C2
+
+d <- matrix(rep(0,r), ncol=1)
+n <- length (data$income)
+
+betahat3 <- matrix(interaction.model$coefficients, ncol=1)
+sigma2hat3 <- summary(interaction.model)$sigma^2
+X3 <- model.matrix(interaction.model)
+F3 <- (t(C2%*%betahat3-d)%*%solve(C2%*%solve(t(X3)%*%X3)%*%t(C2))%*%(C2%*%betahat3-d))/(r*sigma2hat3)
+F3
+1-pf(F3,r,n-length(betahat3))
+```
+
+
+As is apparent, the interaction effect is not significant according to the F-test. 
 
 # Problem 2 \hspace{3mm} Teaching reading
 
 ## a)
 
-The hypothesis test is 
+Define $\mu_A, \mu_B$ and $\mu_C$ as the expected score when using methods $A, B$ and $C$ respectively. 
+
+Then, the hypothesis test is 
 
 $$
-H_0: \alpha_A = \alpha_B = \alpha_C = 0 \hspace{2mm} \text{ vs. } \hspace{2mm} H_1: \text{ At least one } \alpha \neq 0.
+H_0: \mu_A = \mu_B = \mu_C \hspace{2mm} \text{ vs. } \hspace{2mm} H_1: \text{ At least one is different from the others}.
 $$
-Assumptions needed to make to perform the test are ...
 
-Performing the test gives ...
+The *treatment sum of squares*, i.e. the SSR is given by $22\cdot((41.05-44.02)^2 + (44.27-44.02)^2 + (46.73-44.02)^2) = 357.005$ and the SSE is 2511.712. 
 
-The conclusion from the test is ...
+The model under the null hypothesis only contains an intercept, where $\text{SSE}_0$ is the same as SST, since SSR vanishes. Thus the F-test reads
+
+$$
+F = \frac{(\text{SSE}_0-\text{SSE})/r}{\text{SSE}/(n-p)} = \frac{\text{SSR}/r}{\text{SSE}/(n-p)} = \frac{357.005/2}{2511.712/(66-3)} = 4.477.
+$$
+
+The p-value is 0.015, so the null hypothesis is rejected (at least) at level 0.05, i.e. the teaching method matters.  
+
+Assumptions needed to perform the test are that the model has the form $X_{ij} = \mu + \alpha_i + \epsilon_{ij}$, for $i = 1,2,3$ and $j = 1, 2, \dots, 22$, where the response is the reading score for subject $j$ receiving teaching method $i$. 
 
 ## b)
 
-The suggested estimator, $\hat{\gamma}$, for $\gamma$ is 
+Define $\gamma = \mu_B/\mu_C$. We suggest an estimator for this quantity: $\hat{\gamma} = \bar{X}_B/\bar{X}_C$. A first-order Taylor expansion yields 
+
+$$
+\frac{x}{y} = h(x,y) \approx h(\mu_B, \mu_C) + h_x(\mu_B, \mu_C)(x-\mu_B) + h_y(\mu_B, \mu_C)(y-\mu_C) = \frac{\mu_B}{\mu_C} + \frac{1}{\mu_C}(x-\mu_C) - \frac{\mu_B}{\mu_C^2}(y-\mu_C), 
+$$
+
+which implies the following approximations to the expected value and standard deviation of this estimator 
+
+$$
+\begin{split}
+\widehat{\text{E}(\hat{\gamma})} &= \frac{\hat{\mu}_B}{\hat{\mu}_C} \\
+\widehat{\text{SD}(\hat{\gamma})} &= \left(\frac{1}{\hat{\mu}_C^2} \text{Var}(\bar{X}_B) + \frac{\hat{\mu}_B^2}{\hat{\mu}_C^4}\text{Var}(\bar{X}_C)\right)^{1/2} = \frac{1}{\hat{\mu}_c}\sqrt{\frac{\hat{\sigma}^2_B}{n_B}+ \frac{\hat{\mu}_B^2}{\hat{\mu}_C^2}\frac{\hat{\sigma}^2_C}{n_C}}, 
+\end{split}
+$$
+
+where $\text{Var}(\bar{X}_B) = \frac{\sigma_B^2}{n_B}$. With the given numerical values, these estimates are $\widehat{\text{E}(\hat{\gamma})} = \frac{46.73}{44.27} \approx 1.06$ and $\widehat{\text{SD}(\hat{\gamma})} = \frac{1}{44.27}\sqrt{\frac{7.388^2}{22}+ \frac{46.73^2}{44.27^2}\frac{5.767^2}{22}} \approx 0.046$.
